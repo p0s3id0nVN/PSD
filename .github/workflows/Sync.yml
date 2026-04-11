@@ -1,0 +1,53 @@
+name: Sync and Rename BRENE to PSD
+
+on:
+  schedule:
+    - cron: '0 1 * * *' # Chạy vào 1h sáng mỗi ngày
+  workflow_dispatch: # Cho phép bạn bấm nút "Run workflow" để chạy ngay lập tức
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Cấp quyền ghi để bot có thể push code
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Config Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Sync with Upstream
+        run: |
+          git remote add upstream https://github.com/rrr333nnn333/BRENE.git
+          git fetch upstream
+          # Hòa trộn code từ upstream vào nhánh hiện tại (giả sử là main)
+          # Nếu repo dùng 'master', hãy đổi 'main' thành 'master'
+          git merge upstream/main --strategy-option theirs --allow-unrelated-histories || echo "No changes or conflict handled"
+
+      - name: Find and Replace BRENE to PSD
+        run: |
+          # Tìm và thay thế nội dung bên trong các file
+          # Loại bỏ thư mục .git để tránh hỏng cấu hình repo
+          find . -type f -not -path '*/.*' -exec sed -i 's/BRENE/PSD/g' {} +
+          
+          # Nếu bạn muốn đổi cả tên FILE hoặc THƯ MỤC có chứa chữ BRENE:
+          find . -name "*BRENE*" -not -path '*/.*' | while read -r file; do
+            mv "$file" "${file//BRENE/PSD}"
+          done
+
+      - name: Commit and Push
+        run: |
+          git add .
+          # Kiểm tra nếu có thay đổi mới commit để tránh lỗi workflow
+          if ! git diff --cached --quiet; then
+            git commit -m "Auto-sync and renamed BRENE to PSD"
+            git push origin HEAD
+          else
+            echo "No changes detected."
+          fi
