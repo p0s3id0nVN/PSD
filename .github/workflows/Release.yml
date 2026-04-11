@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       version_name:
-        description: 'Nhập tên phiên bản (ví dụ: v1.0.5)'
+        description: 'Nhập tên phiên bản (ví dụ: 1)'
         required: false
         default: ''
 
@@ -33,13 +33,13 @@ jobs:
           REF_VER="${{ github.ref_name }}"
           
           if [ -n "$INPUT_VER" ]; then
-            VERSION=$INPUT_VER
+            VERSION='v1.0.$INPUT_VER'
           else
             VERSION=$REF_VER
           fi
           
           # 3. Tạo tên file cuối cùng
-          FULL_NAME="${REPO_NAME}-SusFS-Manager-v1.0.${VERSION}.zip"
+          FULL_NAME="${REPO_NAME}-SusFS-Manager-${VERSION}.zip"
           
           echo "FINAL_NAME=$FULL_NAME" >> $GITHUB_OUTPUT
           echo "VERSION_TAG=$VERSION" >> $GITHUB_OUTPUT
