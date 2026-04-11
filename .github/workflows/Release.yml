@@ -3,11 +3,11 @@ name: Create GitHub Release
 on:
   push:
     tags:
-      - 'v*' # Chạy tự động khi push tag v1.0, v2.0...
-  workflow_dispatch: # <--- THÊM DÒNG NÀY để tạo nút chạy thủ công
+      - 'v*'
+  workflow_dispatch: # Nút chạy thủ công
 
 permissions:
-  contents: write 
+  contents: write
 
 jobs:
   build-and-release:
@@ -16,18 +16,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set up Filename
+        id: filename
+        run: |
+          # Lấy tên repo (ví dụ: PSD)
+          REPO_NAME=${{ github.event.repository.name }}
+          # Lấy tên tag hoặc tên nhánh (ví dụ: v1.0.0 hoặc main)
+          VERSION=${{ github.ref_name }}
+          # Tạo biến tên file đầy đủ
+          FULL_NAME="${REPO_NAME}-SusFS-Manager-${VERSION}.zip"
+          echo "FINAL_NAME=$FULL_NAME" >> $GITHUB_OUTPUT
+
       - name: Zip Source Code
         run: |
-          zip -r source-code.zip . -x ".git/*" ".github/*"
+          # Sử dụng biến FINAL_NAME vừa tạo ở trên
+          zip -r "${{ steps.filename.outputs.FINAL_NAME }}" . -x ".git/*" ".github/*"
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: source-code.zip
-          # Khi chạy thủ công, github.ref_name sẽ là tên nhánh (vd: main)
-          # Khi chạy bằng tag, nó sẽ là tên tag (vd: v1.0.0)
+          files: ${{ steps.filename.outputs.FINAL_NAME }}
           name: Release ${{ github.ref_name }}
-          tag_name: ${{ github.ref_name }} 
+          tag_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
         env:
