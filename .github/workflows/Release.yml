@@ -1,0 +1,34 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Chạy tự động khi push tag v1.0, v2.0...
+  workflow_dispatch: # <--- THÊM DÒNG NÀY để tạo nút chạy thủ công
+
+permissions:
+  contents: write 
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Zip Source Code
+        run: |
+          zip -r source-code.zip . -x ".git/*" ".github/*"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: source-code.zip
+          # Khi chạy thủ công, github.ref_name sẽ là tên nhánh (vd: main)
+          # Khi chạy bằng tag, nó sẽ là tên tag (vd: v1.0.0)
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }} 
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
