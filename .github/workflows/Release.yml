@@ -30,7 +30,7 @@ jobs:
           # 2. Xác định Version: 
           # Ưu tiên: Input thủ công > Tag name > Branch name
           INPUT_VER="${{ github.event.inputs.version_name }}"
-          REF_VER="${{ github.ref_name }}"
+          REF_VER="v1.0.${{ github.ref_name }}"
           
           if [ -n "$INPUT_VER" ]; then
             VERSION=$INPUT_VER
