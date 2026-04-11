@@ -1,4 +1,4 @@
-PERSISTENT_DIR=/data/adb/brene
+PERSISTENT_DIR=/data/adb/p0s3id0n
 SUSFS_BIN=/data/adb/ksu/bin/susfs
 
 rm -rf "${PERSISTENT_DIR}"

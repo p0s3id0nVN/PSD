@@ -1,7 +1,7 @@
 MODDIR=${0%/*}
 DEST_BIN_DIR=/data/adb/ksu/bin
 SUSFS_BIN=/data/adb/ksu/bin/susfs
-PERSISTENT_DIR=/data/adb/brene
+PERSISTENT_DIR=/data/adb/p0s3id0n
 # Load config
 [[ -e ${PERSISTENT_DIR}/config.sh ]] && source ${PERSISTENT_DIR}/config.sh
 source ${MODDIR}/utils.sh
@@ -105,8 +105,8 @@ fi
 # if [[ $config_hide_modules_img == 1 ]]; then
 ## Hide all sus ext4 loops and jbd2 journals if they are still mounted and with jdb2 journal enabled ##
 # 	for device in $(ls -Ld /proc/fs/jbd2/loop*8 | sed 's|/proc/fs/jbd2/||; s|-8||'); do
-# 		brene_sus_path /proc/fs/jbd2/${device}-8
-# 		brene_sus_path /proc/fs/ext4/${device}
+# 		p0s3id0n_sus_path /proc/fs/jbd2/${device}-8
+# 		p0s3id0n_sus_path /proc/fs/ext4/${device}
 # 	done
 ## Also we need to spoof the nlink of /proc/fs/jbd2 to 2 ##
 # ${SUSFS_BIN} add_sus_kstat_statically '/proc/fs/jbd2' 'default' 'default' '2' 'default' 'default' 'default' 'default' 'default' 'default' 'default' 'default' 'default'
@@ -134,13 +134,13 @@ if [[ $config_custom_uname_spoofing == 1 ]]; then
 	printf "Custom Uname Spoofing" >> "${PERSISTENT_DIR}/logs.txt"
 	printf "\n#####################\n" >> "${PERSISTENT_DIR}/logs.txt"
 
-	brene_set_uname "${config_custom_uname_kernel_release}" "${config_custom_uname_kernel_version}"
+	p0s3id0n_set_uname "${config_custom_uname_kernel_release}" "${config_custom_uname_kernel_version}"
 elif [[ $config_uname_spoofing == 1 ]]; then
 	printf "##############\n" >> "${PERSISTENT_DIR}/logs.txt"
 	printf "Uname Spoofing" >> "${PERSISTENT_DIR}/logs.txt"
 	printf "\n##############\n" >> "${PERSISTENT_DIR}/logs.txt"
 
-	brene_set_uname "${config_uname_kernel_release}" "${config_uname_kernel_version}"
+	p0s3id0n_set_uname "${config_uname_kernel_release}" "${config_uname_kernel_version}"
 fi
 
 

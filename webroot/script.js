@@ -3,8 +3,8 @@ import './assets/mwc.js'
 
 document.querySelector('div.preload-hidden').classList.remove('preload-hidden')
 
-const MODDIR = '/data/adb/modules/brene'
-const PERSISTENT_DIR = '/data/adb/brene'
+const MODDIR = '/data/adb/modules/p0s3id0n'
+const PERSISTENT_DIR = '/data/adb/p0s3id0n'
 const SUSFS_BIN = '/data/adb/ksu/bin/susfs'
 const KSU_BIN = '/data/adb/ksu/bin/ksud'
 const configs = [
@@ -71,9 +71,9 @@ exec(`cat ${PERSISTENT_DIR}/logs.txt`).then(result => {
 	container.innerText = result.stdout
 })
 
-// Load brene version
+// Load p0s3id0n version
 exec(`grep "^version=" ${MODDIR}/module.prop | cut -d'=' -f2`).then(result => {
-	const element = document.getElementById('brene-version')
+	const element = document.getElementById('p0s3id0n-version')
 	element.innerText = result.errno === 0 ? result.stdout : 'unknown'
 })
 

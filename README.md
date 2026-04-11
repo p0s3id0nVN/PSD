@@ -1,4 +1,4 @@
-# BRENE - A SuSFS/KernelSU module for SuSFS patched kernels
+# p0s3id0n - A SuSFS/KernelSU module for SuSFS patched kernels
 
 This module is used for installing a userspace helper tool called ksu_susfs and susfs (They are the same binary) into /data/adb/ksu/bin/ to communicate with SUSFS kernel.
 
