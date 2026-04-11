@@ -1,6 +1,6 @@
 id=PSD
 name=PSD - SUSFS-MANAGER
-version=v0.0.47
+version=v1.0.2
 versionCode=1
 author=p0s3id0n, simonpunk & KOWX712
 description=[Module Status: ❓ | SuSFS Patches: ❓] A SuSFS/KernelSU module for SuSFS patched kernels
