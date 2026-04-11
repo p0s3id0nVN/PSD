@@ -1,5 +1,5 @@
 PATH=/data/adb/ksu/bin:$PATH
-PERSISTENT_DIR=/data/adb/p0s3id0n
+PERSISTENT_DIR=/data/adb/PSD
 SUSFS_BIN=/data/adb/ksu/bin/susfs
 
 ## susfs_clone_perm <file/or/dir/perm/to/be/changed> <file/or/dir/to/clone/from>

@@ -1,7 +1,7 @@
 MODDIR=${0%/*}
 KSU_BIN=/data/adb/ksu/bin/ksud
 SUSFS_BIN=/data/adb/ksu/bin/susfs
-PERSISTENT_DIR=/data/adb/p0s3id0n
+PERSISTENT_DIR=/data/adb/PSD
 # Load config
 [[ -e ${PERSISTENT_DIR}/config.sh ]] && source ${PERSISTENT_DIR}/config.sh
 source ${MODDIR}/utils.sh
@@ -89,7 +89,7 @@ if [[ $config_non_standard_sdcard_paths_hiding == 1 ]]; then
 			continue
 		fi
 
-		p0s3id0n_sus_path_loop "${i}"
+		PSD_sus_path_loop "${i}"
 	done
 fi
 
@@ -113,7 +113,7 @@ if [[ $config_non_standard_sdcard_android_paths_hiding == 1 ]]; then
 			continue
 		fi
 
-		p0s3id0n_sus_path_loop "${i}"
+		PSD_sus_path_loop "${i}"
 	done
 fi
 
@@ -123,7 +123,7 @@ if [[ $config_hide_data_local_tmp == 1 ]]; then
 	printf "\n############################\n" >> "${PERSISTENT_DIR}/logs.txt"
 
 	for i in /data/local/tmp/*; do
-		p0s3id0n_sus_path_loop "${i}"
+		PSD_sus_path_loop "${i}"
 	done
 fi
 
@@ -132,10 +132,10 @@ fi
 printf "\n##################\n" >> "${PERSISTENT_DIR}/logs.txt"
 printf "Other Paths Hiding" >> "${PERSISTENT_DIR}/logs.txt"
 printf "\n##################\n" >> "${PERSISTENT_DIR}/logs.txt"
-# p0s3id0n_sus_path /sys/block/loop0
-p0s3id0n_sus_path /system/addon.d
-p0s3id0n_sus_path /vendor/bin/install-recovery.sh
-p0s3id0n_sus_path /system/bin/install-recovery.sh
+# PSD_sus_path /sys/block/loop0
+PSD_sus_path /system/addon.d
+PSD_sus_path /vendor/bin/install-recovery.sh
+PSD_sus_path /system/bin/install-recovery.sh
 
 if [[ $config_hide_sdcard_android_data == 1 ]]; then
 	printf "\n#################################\n" >> "${PERSISTENT_DIR}/logs.txt"
@@ -149,7 +149,7 @@ if [[ $config_hide_sdcard_android_data == 1 ]]; then
 	done
 
 	for i in $(pm list packages -3 | cut -d':' -f2); do
-		[[ -e "/sdcard/Android/data/$i" ]] && p0s3id0n_sus_path "/sdcard/Android/data/$i"
+		[[ -e "/sdcard/Android/data/$i" ]] && PSD_sus_path "/sdcard/Android/data/$i"
 	done
 fi
 
@@ -159,7 +159,7 @@ if [[ -e "${PERSISTENT_DIR}/custom_sus_map.txt" ]]; then
 	while IFS= read -r i; do
 		# Skip empty lines or comments
 		[[ -z "${i}" || "${i}" == "#"* ]] && continue
-		[[ -e "${i}" ]] && p0s3id0n_sus_map "${i}"
+		[[ -e "${i}" ]] && PSD_sus_map "${i}"
 	done < "${PERSISTENT_DIR}/custom_sus_map.txt"
 fi
 
@@ -168,7 +168,7 @@ if [[ -e "${PERSISTENT_DIR}/custom_sus_path.txt" ]]; then
 	while IFS= read -r i; do
 		# Skip empty lines or comments
 		[[ -z "${i}" || "${i}" == "#"* ]] && continue
-		[[ -e "${i}" ]] && p0s3id0n_sus_path "${i}"
+		[[ -e "${i}" ]] && PSD_sus_path "${i}"
 	done < "${PERSISTENT_DIR}/custom_sus_path.txt"
 fi
 
@@ -177,7 +177,7 @@ if [[ -e "${PERSISTENT_DIR}/custom_sus_path_loop.txt" ]]; then
 	while IFS= read -r i; do
 		# Skip empty lines or comments
 		[[ -z "${i}" || "${i}" == "#"* ]] && continue
-		[[ -e "${i}" ]] && p0s3id0n_sus_path_loop "${i}"
+		[[ -e "${i}" ]] && PSD_sus_path_loop "${i}"
 	done < "${PERSISTENT_DIR}/custom_sus_path_loop.txt"
 fi
 
@@ -202,14 +202,14 @@ fi
 ##         busybox nsenter -t <pid_of_mnt_ns_the_target_dev_number_belongs_to> -m ksu_susfs add_sus_map <target_path>
 
 ## Hide some zygisk modules ##
-# p0s3id0n_sus_map /data/adb/modules/my_module/zygisk/arm64-v8a.so
+# PSD_sus_map /data/adb/modules/my_module/zygisk/arm64-v8a.so
 if [[ $config_hide_zygisk_modules == 1 ]]; then
 	printf "\n###############################\n" >> "${PERSISTENT_DIR}/logs.txt"
 	printf "Zygisk Module Injections Hiding" >> "${PERSISTENT_DIR}/logs.txt"
 	printf "\n###############################\n" >> "${PERSISTENT_DIR}/logs.txt"
 
 	for i in $(find /data/adb/modules -name *.so | grep /zygisk/); do
-		p0s3id0n_sus_map "${i}"
+		PSD_sus_map "${i}"
 	done
 fi
 
@@ -221,7 +221,7 @@ if [[ $config_hide_injections == 1 ]]; then
 	for i in $(ls /data/adb/modules); do
 		if [[ -e "/data/adb/modules/${i}/system" ]]; then
 			for x in $(find "/data/adb/modules/${i}/system" -type f -name "*.*"); do
-				p0s3id0n_sus_map "${x}"
+				PSD_sus_map "${x}"
 			done
 		fi
 	done

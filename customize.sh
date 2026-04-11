@@ -1,7 +1,7 @@
 KSU_BIN=/data/adb/ksu/bin/ksud
 DEST_BIN_DIR=/data/adb/ksu/bin
 SUSFS_BIN=/data/adb/ksu/bin/susfs
-PERSISTENT_DIR=/data/adb/p0s3id0n
+PERSISTENT_DIR=/data/adb/PSD
 
 # Hot Install
 export MODULE_HOT_INSTALL_REQUEST="true"
@@ -64,7 +64,7 @@ fi
 [[ -e "/data/adb/modules/susfs4ksu" ]] && touch "/data/adb/modules/susfs4ksu/disable" && echo '[✅] Disabling another SuSFS module'
 [[ -e "/data/adb/modules/susfs_manager" ]] && touch "/data/adb/modules/susfs_manager/disable" && echo '[✅] Disabling another SuSFS module'
 
-echo '[✅] Preparing p0s3id0n persistent directory, the path is /data/adb/p0s3id0n'
+echo '[✅] Preparing PSD persistent directory, the path is /data/adb/PSD'
 mkdir -p "${PERSISTENT_DIR}"
 
 [[ ! -f ${PERSISTENT_DIR}/custom_sus_map.txt ]] && cp ${MODPATH}/custom_sus_map.txt ${PERSISTENT_DIR} && echo '[✅] Added custom_sus_map.txt'

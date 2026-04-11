@@ -2,7 +2,7 @@
 # DEST_BIN_DIR=/data/adb/ksu/bin
 # KSU_BIN=/data/adb/ksu/bin/ksud
 # SUSFS_BIN=/data/adb/ksu/bin/susfs
-# PERSISTENT_DIR=/data/adb/p0s3id0n
+# PERSISTENT_DIR=/data/adb/PSD
 # # Load config
 # [[ -e ${PERSISTENT_DIR}/config.sh ]] && source ${PERSISTENT_DIR}/config.sh
 # source ${MODDIR}/utils.sh

@@ -1,6 +1,6 @@
-id=p0s3id0n
-name=.p0s3id0n - SUSFS-FOR-KERNELSU
+id=PSD
+name=PSD - SUSFS-MANAGER
 version=v0.0.47
 versionCode=1
-author=rrr333nnn333, simonpunk & KOWX712
+author=p0s3id0n, simonpunk & KOWX712
 description=[Module Status: ❓ | SuSFS Patches: ❓] A SuSFS/KernelSU module for SuSFS patched kernels
