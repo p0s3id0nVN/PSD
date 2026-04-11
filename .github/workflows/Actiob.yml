@@ -1,0 +1,35 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Chạy action khi bạn push tag có định dạng v1.0, v2.1.0...
+
+permissions:
+  contents: write # Cấp quyền ghi để action có thể tạo Release
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      # Bước 1: Checkout source code về máy ảo
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Bước 2: Đóng gói source code thành file ZIP
+      # Bạn có thể thay đổi tên file hoặc loại trừ các thư mục không cần thiết (.git, node_modules...)
+      - name: Zip Source Code
+        run: |
+          zip -r source-code.zip . -x ".git/*" ".github/*"
+
+      # Bước 3: Tạo Release và upload file ZIP lên
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: source-code.zip
+          name: Release ${{ github.ref_name }}
+          tag_name: ${{ github.ref }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
