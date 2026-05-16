@@ -24,9 +24,9 @@
 			<button class="tab-btn active" data-tab="android">Android</button>
 			<button class="tab-btn" data-tab="hiding">Hiding</button>
 			<button class="tab-btn" data-tab="spoofing">Spoofing</button>
+			<button class="tab-btn" data-tab="ksu">KSU</button>
 			<button class="tab-btn" data-tab="rom">ROM</button>
 			<button class="tab-btn" data-tab="advanced">Advanced</button>
-			<button class="tab-btn" data-tab="ksu">KSU</button>
 			<button class="tab-btn" data-tab="info">Info</button>
 		</nav>
 
@@ -79,9 +79,9 @@
 							<span class="card-row__title">Non-standard /sdcard</span>
 							<span class="card-row__sub">Standard Paths:</span>
 							<span class="card-row__sub">Alarms Android Audiobooks DCIM Documents Download Movies Music Notifications Pictures Podcasts Recordings Ringtones</span>
-							<span class="card-row__sub">Example paths:</span>
-							<span class="card-row__sub">/sdcard/MT2 (MT Manager)</span>
-							<span class="card-row__sub">/sdcard/TWRP (Team Win Recovery Project)</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">/sdcard/MT2</span>
+							<span class="card-row__tag--code">/sdcard/TWRP</span>
 						</div>
 						<md-switch icons id="paths_hiding__non_standard_sdcard"></md-switch>
 						<md-ripple></md-ripple>
@@ -92,8 +92,8 @@
 							<span class="card-row__title">Non-standard /sdcard/Android</span>
 							<span class="card-row__sub"> Standard Paths: </span>
 							<span class="card-row__sub">data media obb</span>
-							<span class="card-row__sub">Example paths:</span>
-							<span class="card-row__sub">/sdcard/Android/fas-rs</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">/sdcard/Android/fas-rs</span>
 						</div>
 						<md-switch icons id="paths_hiding__non_standard_sdcard_android"></md-switch>
 						<md-ripple></md-ripple>
@@ -102,9 +102,9 @@
 					<div class="card-row">
 						<div class="card-row__body">
 							<span class="card-row__title">/data/local/tmp</span>
-							<span class="card-row__sub">Example paths:</span>
-							<span class="card-row__sub">/data/local/tmp/main.jar</span>
-							<span class="card-row__sub">/data/local/tmp/DebugAssistant.log</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">/data/local/tmp/main.jar</span>
+							<span class="card-row__tag--code">/data/local/tmp/DebugAssistant.log</span>
 						</div>
 						<md-switch icons id="paths_hiding__data_local_tmp"></md-switch>
 						<md-ripple></md-ripple>
@@ -112,11 +112,11 @@
 
 					<div class="card-row">
 						<div class="card-row__body">
-							<span class="card-row__title">/sdcard/Android/[data|media|obb]</span>
-							<span class="card-row__sub">Example paths:</span>
-							<span class="card-row__sub">/sdcard/Android/data/io.github.muntashirakon.AppManager</span>
-							<span class="card-row__sub">/sdcard/Android/media/io.github.muntashirakon.AppManager</span>
-							<span class="card-row__sub">/sdcard/Android/obb/io.github.muntashirakon.AppManager</span>
+							<span class="card-row__title">/sdcard/Android/[data | media | obb]</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">/sdcard/Android/data/ io.github.muntashirakon.AppManager</span>
+							<span class="card-row__tag--code">/sdcard/Android/media/ io.github.muntashirakon.AppManager</span>
+							<span class="card-row__tag--code">/sdcard/Android/obb/ io.github.muntashirakon.AppManager</span>
 						</div>
 						<md-switch icons id="paths_hiding__sdcard_android_data_media_obb"></md-switch>
 						<md-ripple></md-ripple>
@@ -131,9 +131,9 @@
 							<span class="card-row__sub"
 								>Prevent zygote from caching the sus mounts in memory, and to keep them hidden from /proc/self/[mounts|mountinfo|mountstat] for non-su processes</span
 							>
-							<span class="card-row__sub">Example detections:</span>
-							<span class="card-row__sub">Holmes: Futile Trace Hide</span>
-							<span class="card-row__sub">Native Test: Futile Hide (08)</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">Holmes: Futile Trace Hide</span>
+							<span class="card-row__tag--code">Native Test: Futile Hide (08)</span>
 						</div>
 						<md-switch icons id="hide_sus_mnts_for_non_su_procs"></md-switch>
 						<md-ripple></md-ripple>
@@ -145,9 +145,9 @@
 							<span class="card-row__sub">Only effective for umounted process with uid ≥ 10.000</span>
 							<span class="card-row__sub"> /data/adb/modules/module_name/system/*/*.*</span>
 							<span class="card-row__sub"> /data/adb/modules/module_name/zygisk/*.so</span>
-							<span class="card-row__sub">Example detections:</span>
-							<span class="card-row__sub">Native Detector: Found Injection</span>
-							<span class="card-row__sub">Disclosure: Found suspicious memory mapping (inconsistent inode)</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">Native Detector: Found Injection</span>
+							<span class="card-row__tag--code">Disclosure: Found suspicious memory mapping (inconsistent inode)</span>
 						</div>
 						<md-switch icons id="hide_injections"></md-switch>
 						<md-ripple></md-ripple>
@@ -168,9 +168,9 @@
 							<span class="card-row__sub">- It does NOT support hiding for anon memory.</span>
 							<span class="card-row__sub">- It does NOT hide any inline hooks or plt hooks cause by the injected library itself</span>
 							<span class="card-row__sub">- It may not be able to evade detections by apps that implement a good injection detection</span>
-							<span class="card-row__sub">Example:</span>
-							<span class="card-row__sub">/system/fonts/Roboto-Regular.ttf</span>
-							<span class="card-row__sub">/data/adb/modules/my_module/zygisk/arm64-v8a.so</span>
+							<span class="card-row__tag--code">Example:</span>
+							<span class="card-row__tag--code">/system/fonts/Roboto-Regular.ttf</span>
+							<span class="card-row__tag--code">/data/adb/modules/my_module/zygisk/arm64-v8a.so</span>
 							<!-- SUS MAP -->
 
 							<!-- SUS PATH -->
@@ -181,9 +181,9 @@
 								process</span
 							>
 							<span class="card-row__sub">For paths that are read-only all the time, add them via 'add_sus_path'</span>
-							<span class="card-row__sub">Example:</span>
-							<span class="card-row__sub">/system/addon.d</span>
-							<span class="card-row__sub">/system/bin/install-recovery.sh</span>
+							<span class="card-row__tag--code">Example:</span>
+							<span class="card-row__tag--code">/system/addon.d</span>
+							<span class="card-row__tag--code">/system/bin/install-recovery.sh</span>
 							<!-- SUS PATH -->
 
 							<!-- SUS PATH LOOP -->
@@ -194,9 +194,9 @@
 							>
 							<span class="card-row__sub">Also it does not check if the path is existed or not, instead it checks for empty string only, so be careful what to add</span>
 							<span class="card-row__sub">For paths that are frequently modified, we can add them via 'add_sus_path_loop'</span>
-							<span class="card-row__sub">Example:</span>
-							<span class="card-row__sub">/sdcard/TWRP</span>
-							<span class="card-row__sub">/data/local/tmp/main.jar</span>
+							<span class="card-row__tag--code">Example:</span>
+							<span class="card-row__tag--code">/sdcard/TWRP</span>
+							<span class="card-row__tag--code">/data/local/tmp/main.jar</span>
 							<!-- SUS PATH LOOP -->
 						</div>
 						<md-ripple></md-ripple>
@@ -249,9 +249,9 @@
 							<span class="card-row__title">/proc/cmdline or /proc/bootconfig Spoofing</span>
 							<span class="card-row__sub">Spoof the output of /proc/cmdline (non-gki) or /proc/bootconfig (gki) from a text file</span>
 							<span class="card-row__sub">No root process detects it for now, and this spoofing won't help much actually</span>
-							<span class="card-row__sub">e.g. the following</span>
-							<span class="card-row__sub">androidboot.warranty_bit = "0"</span>
-							<span class="card-row__sub">androidboot.verifiedbootstate = "green"</span>
+							<span class="card-row__tag--code">Example:</span>
+							<span class="card-row__tag--code">androidboot.warranty_bit = "0"</span>
+							<span class="card-row__tag--code">androidboot.verifiedbootstate = "green"</span>
 						</div>
 						<md-switch icons id="proc_cmdline_bootconfig_spoofing"></md-switch>
 						<md-ripple></md-ripple>
@@ -261,6 +261,9 @@
 						<div class="card-row__body">
 							<span class="card-row__title">Android System Properties Spoofing</span>
 							<span class="card-row__sub">Spoof some android system properties</span>
+							<span class="card-row__tag--code">Example:</span>
+							<span class="card-row__tag--code">[ro.build.type]: [user]</span>
+							<span class="card-row__tag--code">[ro.build.tags]: [release-keys]</span>
 						</div>
 						<md-switch icons id="android_system_properties_spoofing"></md-switch>
 						<md-ripple></md-ripple>
@@ -271,9 +274,14 @@
 							<span class="card-row__title">Uname Spoofing</span>
 							<span class="card-row__sub">Spoof uname for all processes</span>
 							<span class="card-row__sub">Only 'release' and 'version' are spoofed as others are no longer needed</span>
-							<span class="card-row__sub">e.g. the following</span>
-							<span class="card-row__sub">Kernel Release: 5.10.123-android12-9-g690101101069</span>
-							<span class="card-row__sub">Kernel Version: #1 SMP PREEMPT Wed Jun 9 03:20:30 UTC 2069</span>
+							<span class="card-row__tag--code">Example:</span>
+							<span class="card-row__tag--code">Kernel Release: 5.10.123-android12-9-g690101101069</span>
+							<span class="card-row__tag--code">Kernel Version: #1 SMP PREEMPT Wed Jun 9 03:20:30 UTC 2069</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">Duck Detector: Build time drift</span>
+							<span class="card-row__tag--code">Holmes: Abnormal Environment (03)</span>
+							<span class="card-row__tag--code">Native Detector: Detected Custom Kernel</span>
+							<span class="card-row__tag--code">Disclosure: Custom kernel detected (build date...)</span>
 						</div>
 						<md-switch icons id="uname_spoofing"></md-switch>
 						<md-ripple></md-ripple>
@@ -324,7 +332,7 @@
 					<div class="card-row">
 						<div class="card-row__body">
 							<span class="card-row__title">Remove Custom ROM Properties <span class="chip-exp">EXPERIMENTAL</span></span>
-							<span class="card-row__sub">Some LineageOS and CrDroid properties</span>
+							<span class="card-row__sub">Some LineageOS, CrDroid and Halcyon properties</span>
 						</div>
 						<md-switch icons id="rom_props"></md-switch>
 						<md-ripple></md-ripple>
@@ -344,6 +352,15 @@
 			<section class="tab-panel" data-panel="advanced">
 				<p class="section-label">Advanced / Other Features</p>
 				<div class="card-group">
+					<div class="card-row">
+						<div class="card-row__body">
+							<span class="card-row__title">BRENE Logs</span>
+							<span class="card-row__sub">Enable or disable BRENE Logs</span>
+						</div>
+						<md-switch icons id="brene_logs"></md-switch>
+						<md-ripple></md-ripple>
+					</div>
+
 					<div class="card-row">
 						<div class="card-row__body">
 							<span class="card-row__title">SuSFS Logs</span>

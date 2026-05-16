@@ -67,7 +67,7 @@ fi
 
 # Remove Custom ROM Props (EXPERIMENTAL)
 if [[ "${config_rom_props}" == "1" ]]; then
-	resetprop | grep -E "lineage|crdroid" | sed -E "s/^\[(.*)\]:.*/\1/" | while IFS= read -r prop; do resetprop -p -d "$prop"; done
+	resetprop | grep -E "lineage|crdroid|halcyon" | sed -E "s/^\[(.*)\]:.*/\1/" | while IFS= read -r prop; do resetprop -p -d "$prop"; done
 fi
 
 #### Hide some sus paths, effective only for processes that are marked umounted with uid >= 10000 ####
@@ -100,10 +100,14 @@ inotifyd "${MODDIR}/inotify.sh" /sdcard:n &
 
 # Non-standard /sdcard
 if [[ "${config_paths_hiding__non_standard_sdcard}" == "1" ]]; then
-	{
-		echo ""
-		echo "Non-standard /sdcard"
-	} >> "${PERSISTENT_DIR}/logs.txt"
+	if [[ "${config_brene_logs}" == "1" ]]; then
+		{
+			echo ""
+			echo "####################"
+			echo "Non-standard /sdcard"
+			echo "####################"
+		} >> "${PERSISTENT_DIR}/logs.txt"
+	fi
 
 	standard_paths="Alarms Android Audiobooks DCIM Documents Download Movies Music Notifications Pictures Podcasts Recordings Ringtones"
 	for i in /sdcard/*; do
@@ -123,10 +127,14 @@ fi
 
 # Non-standard /sdcard/Android
 if [[ "${config_paths_hiding__non_standard_sdcard_android}" == "1" ]]; then
-	{
-		echo ""
-		echo "Non-standard /sdcard/Android"
-	} >> "${PERSISTENT_DIR}/logs.txt"
+	if [[ "${config_brene_logs}" == "1" ]]; then
+		{
+			echo ""
+			echo "############################"
+			echo "Non-standard /sdcard/Android"
+			echo "############################"
+		} >> "${PERSISTENT_DIR}/logs.txt"
+	fi
 
 	standard_paths="data media obb"
 	for i in /sdcard/Android/*; do
@@ -146,22 +154,30 @@ fi
 
 # /data/local/tmp
 if [[ "${config_paths_hiding__data_local_tmp}" == "1" ]]; then
-	{
-		echo ""
-		echo "/data/local/tmp"
-	} >> "${PERSISTENT_DIR}/logs.txt"
+	if [[ "${config_brene_logs}" == "1" ]]; then
+		{
+			echo ""
+			echo "###############"
+			echo "/data/local/tmp"
+			echo "###############"
+		} >> "${PERSISTENT_DIR}/logs.txt"
+	fi
 
 	for i in /data/local/tmp/*; do
 		brene_sus_path_loop "${i}"
 	done
 fi
 
-# /sdcard/Android/[data|media|obb]
+# /sdcard/Android/[data | media | obb]
 if [[ "${config_paths_hiding__sdcard_android_data_media_obb}" == "1" ]]; then
-	{
-		echo ""
-		echo "/sdcard/Android/[data|media|obb]"
-	} >> "${PERSISTENT_DIR}/logs.txt"
+	if [[ "${config_brene_logs}" == "1" ]]; then
+		{
+			echo ""
+			echo "####################################"
+			echo "/sdcard/Android/[data | media | obb]"
+			echo "####################################"
+		} >> "${PERSISTENT_DIR}/logs.txt"
+	fi
 
 	path1=/sdcard/Android/data
 	path2=/sdcard/Android/media
@@ -174,11 +190,14 @@ if [[ "${config_paths_hiding__sdcard_android_data_media_obb}" == "1" ]]; then
 fi
 
 ## For paths that are read-only all the time, add them via 'add_sus_path' ##
-{
-	printf "\n##################\n"
-	printf "Other Paths Hiding"
-	printf "\n##################\n"
-} >> "${PERSISTENT_DIR}/logs.txt"
+if [[ "${config_brene_logs}" == "1" ]]; then
+	{
+		echo ""
+		echo "##################"
+		echo "Other Paths Hiding"
+		echo "##################"
+	} >> "${PERSISTENT_DIR}/logs.txt"
+fi
 # brene_sus_path "/sys/block/loop0"
 brene_sus_path "/system/addon.d"
 brene_sus_path "/vendor/bin/install-recovery.sh"
@@ -234,11 +253,14 @@ fi
 
 # Injections Hiding
 if [[ "${config_hide_injections}" == "1" ]]; then
-	{
-		printf "\n#################\n"
-		printf "Injections Hiding"
-		printf "\n#################\n"
-	} >> "${PERSISTENT_DIR}/logs.txt"
+	if [[ "${config_brene_logs}" == "1" ]]; then
+		{
+			echo ""
+			echo "#################"
+			echo "Injections Hiding"
+			echo "#################"
+		} >> "${PERSISTENT_DIR}/logs.txt"
+	fi
 
 	for i in /data/adb/modules/*; do
 		if [[ -e "${i}/system" ]]; then
@@ -263,4 +285,6 @@ sed -i "s/^config_uname_kernel_version=.*/config_uname_kernel_version='${config_
 
 resetprop -c 2> /dev/null || true
 
-printf "boot-completed.sh\n\n" >> "${PERSISTENT_DIR}/log.txt"
+if [[ "${config_brene_logs}" == "1" ]]; then
+	echo "boot-completed.sh ✅" >> "${PERSISTENT_DIR}/log.txt"
+fi
