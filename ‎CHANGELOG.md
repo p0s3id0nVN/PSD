@@ -1,10 +1,10 @@
-# BRENE
+# PSD
 
-BRENE - A SuSFS/KernelSU module for SuSFS patched kernels
+PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 
 ## Changelog
 
-# BRENE v0.0.50 - Supports SuSFS 2.1.0
+# PSD v0.0.50 - Supports SuSFS 2.1.0
 
 - improve: WebUI, thanks to telegram user @dnascorpionofficial (code reference)
 - webui: improve swipe
@@ -12,8 +12,8 @@ BRENE - A SuSFS/KernelSU module for SuSFS patched kernels
 - improve: new section "Other Hiding"
 - improve: new section "Custom SuSFS Entries"
 - webui: some improvements
-- improve: BRENE logs
+- improve: PSD logs
 - Also cover halcyon props with "Hide Custom ROM props"
 - Merge pull request #22 from bitThrived/main
-- add: a new toggle "BRENE Logs"
+- add: a new toggle "PSD Logs"
 - drop: old SuSFS patches support
