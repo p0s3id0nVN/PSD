@@ -10,6 +10,7 @@ config_kernel_umount=1
 config_uname_spoofing=1
 config_hide_injections=1
 config_enable_avc_log_spoofing=1
+config_umount_suspicious_mounts=1
 config_hide_sus_mnts_for_non_su_procs=1
 config_proc_cmdline_bootconfig_spoofing=1
 config_android_system_properties_spoofing=1

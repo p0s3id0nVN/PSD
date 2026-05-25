@@ -45,6 +45,7 @@ const configs = [
 	{ id: 'hide_injections' },
 	{ id: 'custom_uname_spoofing' },
 	{ id: 'enable_avc_log_spoofing' },
+	{ id: 'umount_suspicious_mounts' },
 	{ id: 'proc_cmdline_bootconfig_spoofing' },
 	{ id: 'android_system_properties_spoofing' },
 

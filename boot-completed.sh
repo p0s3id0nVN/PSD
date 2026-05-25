@@ -22,9 +22,9 @@ fi
 sed -i "s#^description=.*#description=${status}${description}#" "${MODDIR}/module.prop"
 
 # Kernel Umount
-${KSU_BIN} feature set kernel_umount "${config_kernel_umount}"
+[[ -n "${config_kernel_umount}" ]] && ${KSU_BIN} feature set kernel_umount "${config_kernel_umount}"
 # SU Compat
-${KSU_BIN} feature set su_compat "${config_su_compat}"
+[[ -n "${config_su_compat}" ]] && ${KSU_BIN} feature set su_compat "${config_su_compat}"
 ${KSU_BIN} feature save
 
 # Android Verified Boot Hash Spoofing
@@ -35,28 +35,28 @@ fi
 # Developer Options
 if [[ "${config_developer_options}" == "1" ]]; then
 	settings put global development_settings_enabled 1
-else
+elif [[ "${config_developer_options}" == "0" ]]; then
 	settings put global development_settings_enabled 0
 fi
 
 # USB Debugging
 if [[ "${config_usb_debugging}" == "1" ]]; then
 	settings put global adb_enabled 1
-else
+elif [[ "${config_usb_debugging}" == "0" ]]; then
 	settings put global adb_enabled 0
 fi
 
 # Wireless Debugging
 if [[ "${config_wireless_debugging}" == "1" ]]; then
 	settings put global adb_wifi_enabled 1
-else
+elif [[ "${config_wireless_debugging}" == "0" ]]; then
 	settings put global adb_wifi_enabled 0
 fi
 
 # SELinux
 if [[ "${config_selinux}" == "1" ]]; then
-	[[ "$(getenforce)" == "Permissive" ]] && setenforce 1
-else
+	[[ "$(getenforce)" != "Enforcing" ]] && setenforce 1
+elif [[ "${config_selinux}" == "0" ]]; then
 	[[ "$(getenforce)" == "Enforcing" ]] && setenforce 0
 fi
 
@@ -96,7 +96,7 @@ inotifyd "${MODDIR}/inotify.sh" /sdcard:n &
 
 ## For paths that are frequently modified, we can add them via 'add_sus_path_loop' ##
 
-# Paths Hiding
+# Suspicious Paths Hiding
 
 # Non-standard /sdcard
 if [[ "${config_paths_hiding__non_standard_sdcard}" == "1" ]]; then
@@ -193,9 +193,9 @@ fi
 if [[ "${config_brene_logs}" == "1" ]]; then
 	{
 		echo ""
-		echo "##################"
-		echo "Other Paths Hiding"
-		echo "##################"
+		echo "#############################"
+		echo "Other Suspicious Paths Hiding"
+		echo "#############################"
 	} >> "${PERSISTENT_DIR}/logs.txt"
 fi
 # brene_sus_path "/sys/block/loop0"
@@ -282,6 +282,25 @@ config_uname_kernel_release="${kernel_version}-${android_release}-9-g69010110106
 config_uname_kernel_version="#1 SMP PREEMPT $(resetprop ro.build.date)"
 sed -i "s/^config_uname_kernel_release=.*/config_uname_kernel_release='${config_uname_kernel_release}'/" ${PERSISTENT_DIR}/config.sh
 sed -i "s/^config_uname_kernel_version=.*/config_uname_kernel_version='${config_uname_kernel_version}'/" ${PERSISTENT_DIR}/config.sh
+
+#### Adding sus mounts to umount list via built-in KernelSU kernel umount (not via add_try_umount from old susfs) ####
+# cat <<EOF >/dev/null
+# ## Don't forget to notify KernelSU that all ksu modules all mounted and ready ##
+# /data/adb/ksu/bin/ksud kernel notify-module-mounted
+
+# ## This is just an example to add the sus mounts to kernel umount ##
+# if [ ! -f "/data/adb/susfs_no_auto_add_kernel_umount" ]; then
+# 	cat /proc/1/mountinfo | grep -E "^5[0-9]{5,} .*$|KSU" | awk '{print $5}' | while read -r LINE; do /data/adb/ksu/bin/ksud kernel umount add --flags 2 "${LINE}" 2>/dev/null; done
+# fi
+# EOF
+
+#### Adding sus mounts to umount list via built-in KernelSU kernel umount (not via add_try_umount from old susfs) ####
+if [[ "${config_umount_suspicious_mounts}" == "1" ]]; then
+	## Don't forget to notify KernelSU that all ksu modules all mounted and ready ##
+	${KSU_BIN} kernel notify-module-mounted
+
+	cat /proc/1/mountinfo | grep -E "^5[0-9]{5,} .*$|KSU" | awk '{print $5}' | while read -r LINE; do ${KSU_BIN} kernel umount add --flags 2 "${LINE}" 2> /dev/null; done
+fi
 
 resetprop -c 2> /dev/null || true
 
