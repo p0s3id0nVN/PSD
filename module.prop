@@ -1,7 +1,7 @@
 id=brene
-name=.PSD - SUSFS-FOR-KERNELSU
-version=v0.0.50
-versionCode=50
+name=.BRENE - SUSFS-FOR-KERNELSU
+version=v0.0.51
+versionCode=51
 author=rrr333nnn333, simonpunk & KOWX712
 description=[Module Status: ❓ | SuSFS Patches: ❓] A SuSFS/KernelSU module for SuSFS patched kernels
 updateJson=https://raw.githubusercontent.com/rrr333nnn333/PSD/refs/heads/main/update.json
