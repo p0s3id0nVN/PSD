@@ -4,7 +4,7 @@ PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 
 ## Changelog
 
-# BRENE v0.0.51 - Supports SuSFS 2.1.0
+# PSD v0.0.51 - Supports SuSFS 2.1.0
 
 - improve: README.md
 - optimize: Enhanced script security (#23)
@@ -28,7 +28,7 @@ PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 - webui: add experimental tag to "/sdcard/Android/[data | media | obb]" toggle
 - bump: version to v0.0.51
 
-# BRENE v0.0.50 - Supports SuSFS 2.1.0
+# PSD v0.0.50 - Supports SuSFS 2.1.0
 
 - improve: WebUI, thanks to telegram user @dnascorpionofficial (code reference)
 - webui: improve swipe
