@@ -4,7 +4,18 @@ PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 
 ## Changelog
 
-# PSD v0.0.51 - Supports SuSFS 2.1.0
+# BRENE v0.0.52 - Supports SuSFS 2.1.0 & 2.2.0
+
+- webui: add BreWheel recommendation
+- webui: add description for ..5.u.S Status
+- improve: "/sdcard/Android/[data | media | obb]" option and remove the experimental tag
+- add: hiding support for Neo Backup
+- update: README.md
+- add: new toggle "Hide Suspicious PTYs"
+- webui: add TEESimulator-RS recommendation
+- bump: version to v0.0.52
+
+# BRENE v0.0.51 - Supports SuSFS 2.1.0
 
 - improve: README.md
 - optimize: Enhanced script security (#23)
@@ -27,17 +38,3 @@ PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 - add: new toggle "Umount Suspicious Mounts 2B"
 - webui: add experimental tag to "/sdcard/Android/[data | media | obb]" toggle
 - bump: version to v0.0.51
-
-# PSD v0.0.50 - Supports SuSFS 2.1.0
-
-- improve: WebUI, thanks to telegram user @dnascorpionofficial (code reference)
-- webui: improve swipe
-- improve: new section "Paths Hiding"
-- improve: new section "Other Hiding"
-- improve: new section "Custom SuSFS Entries"
-- webui: some improvements
-- improve: PSD logs
-- Also cover halcyon props with "Hide Custom ROM props"
-- Merge pull request #22 from bitThrived/main
-- add: a new toggle "PSD Logs"
-- drop: old SuSFS patches support
