@@ -4,7 +4,7 @@ PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 
 ## Changelog
 
-# BRENE v0.0.52 - Supports SuSFS 2.1.0 & 2.2.0
+# PSD v0.0.52 - Supports SuSFS 2.1.0 & 2.2.0
 
 - webui: add BreWheel recommendation
 - webui: add description for ..5.u.S Status
@@ -15,7 +15,7 @@ PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 - webui: add TEESimulator-RS recommendation
 - bump: version to v0.0.52
 
-# BRENE v0.0.51 - Supports SuSFS 2.1.0
+# PSD v0.0.51 - Supports SuSFS 2.1.0
 
 - improve: README.md
 - optimize: Enhanced script security (#23)
