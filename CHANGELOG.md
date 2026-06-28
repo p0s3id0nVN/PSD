@@ -4,7 +4,7 @@ PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 
 ## Changelog
 
-# BRENE v0.0.53 - Support for SuSFS 2.1.0 & 2.2.0
+# PSD v0.0.53 - Support for SuSFS 2.1.0 & 2.2.0
 
 - webui: add recommendation for Specter module
 - improve: sync with upstream (resetprop Magisk-compatible system property tool)
@@ -18,7 +18,7 @@ PSD - A SuSFS/KernelSU module for SuSFS patched kernels
 - webui: improve swipe
 - bump: version to v0.0.53
 
-# BRENE v0.0.52 - Supports SuSFS 2.1.0 & 2.2.0
+# PSD v0.0.52 - Supports SuSFS 2.1.0 & 2.2.0
 
 - webui: add BreWheel recommendation
 - webui: add description for ..5.u.S Status
