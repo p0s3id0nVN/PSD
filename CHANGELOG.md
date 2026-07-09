@@ -1,6 +1,6 @@
 # Changelog
 
-# BRENE v0.0.54 - Supports SuSFS 2.2.0
+# PSD v0.0.54 - Supports SuSFS 2.2.0
 
 - webui: add Custom ROM indicator
 - drop: "/data/media/0" paths hiding
