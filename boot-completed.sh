@@ -21,16 +21,22 @@ else
 fi
 sed -i "s#^description=.*#description=${status}${description}#" "${MODDIR}/module.prop"
 
-# Kernel Umount
-[[ -n "${config_kernel_umount}" ]] && ${KSU_BIN} feature set kernel_umount "${config_kernel_umount}"
 # SU Compat
-[[ -n "${config_su_compat}" ]] && ${KSU_BIN} feature set su_compat "${config_su_compat}"
-${KSU_BIN} feature save
-
-# Android Verified Boot Hash Spoofing
-if [[ "${config_verified_boot_hash}" != '' ]]; then
-	resetprop_n "ro.boot.vbmeta.digest" "${config_verified_boot_hash}"
+if [[ "${config_su_compat}" == "1" ]]; then
+	${KSU_BIN} feature set su_compat 1
 fi
+
+# Kernel Umount
+if [[ "${config_kernel_umount}" == "1" ]]; then
+	${KSU_BIN} feature set kernel_umount 1
+fi
+
+# Hide SELinux modification
+if [[ "${config_selinux_hide}" == "1" ]]; then
+	${KSU_BIN} feature set selinux_hide 1
+fi
+
+${KSU_BIN} feature save
 
 # Developer Options
 if [[ "${config_developer_options}" == "1" ]]; then
@@ -226,7 +232,6 @@ if [[ "${config_brene_logs}" == "1" ]]; then
 	} >> "${PERSISTENT_DIR}/logs.txt"
 fi
 # brene_sus_path "/sys/block/loop0"
-brene_sus_path "/system/addon.d"
 brene_sus_path "/vendor/bin/install-recovery.sh"
 brene_sus_path "/system/bin/install-recovery.sh"
 
@@ -425,6 +430,24 @@ if [[ "${config_android_system_properties_spoofing}" == "1" ]]; then
 	else
 		resetprop_n "sys.oem_unlock_allowed" "0"
 	fi
+fi
+
+# Android Verified Boot Hash Spoofing
+if [[ "${config_verified_boot_hash}" != '' ]]; then
+	resetprop_n "ro.boot.vbmeta.digest" "${config_verified_boot_hash}"
+fi
+
+# LineageOS Paths Hiding
+if [[ "${config_lineage_paths_hiding}" == "1" ]]; then
+	find /system /system_ext /vendor /product -iname "*lineage*" | while read -r path; do
+		brene_sus_map "${path}"
+		brene_sus_path_loop "${path}"
+	done
+fi
+
+# Hide /system/addon.d Path
+if [[ "${config_hide_addon_d}" == "1" ]]; then
+	brene_sus_path "/system/addon.d"
 fi
 
 resetprop -c --force

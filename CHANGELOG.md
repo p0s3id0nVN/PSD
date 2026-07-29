@@ -1,11 +1,9 @@
 # Changelog
 
-# PSD v0.0.55 - Supports SuSFS 2.2.0
+# BRENE v0.0.56 - Supports SuSFS 2.2.0
 
-- improve: hide sys.oem_unlock_allowed detection on Android 16+
-- webui: minor improvements
-- add: new feature "sus mount"
-- webui: add "Android Version" and "SuSFS Variant" indicators
-- improve: move "Android System Properties Spoofing" to boot-completed.sh
-- disable: SuSFS version checks
-- bump: version to v0.0.55
+- add: new toggle "Hide SELinux modification"
+- add: new toggle "LineageOS Paths Hiding"
+- add: new toggle "Hide /system/addon.d Path"
+- improve: execute "Android Verified Boot Hash Spoofing" after "Android System Properties Spoofing"
+- bump: version to v0.0.56

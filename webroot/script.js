@@ -20,6 +20,10 @@ const configs = [
 		action: (enabled) => setFeature(`ksud feature set kernel_umount ${enabled ? 1 : 0} && ksud feature save`),
 	},
 	{
+		id: 'selinux_hide',
+		action: (enabled) => setFeature(`ksud feature set selinux_hide ${enabled ? 1 : 0} && ksud feature save`),
+	},
+	{
 		id: 'developer_options',
 		action: (enabled) => setFeature(`settings put global development_settings_enabled ${enabled ? 1 : 0}`),
 	},
@@ -39,8 +43,10 @@ const configs = [
 	{ id: 'rom_props' },
 	{ id: 'brene_logs' },
 	{ id: 'enable_log' },
+	{ id: 'hide_addon_d' },
 	{ id: 'uname_spoofing' },
 	{ id: 'hide_injections' },
+	{ id: 'lineage_paths_hiding' },
 	{ id: 'hide_suspicious_ptys' },
 	{ id: 'custom_uname_spoofing' },
 	{ id: 'hide_framework_res_apk' },
