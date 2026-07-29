@@ -1,6 +1,6 @@
 # Changelog
 
-# BRENE v0.0.56 - Supports SuSFS 2.2.0
+# PSD v0.0.56 - Supports SuSFS 2.2.0
 
 - add: new toggle "Hide SELinux modification"
 - add: new toggle "LineageOS Paths Hiding"
