@@ -133,6 +133,7 @@ elif [[ "${config_hide_sus_mnts_for_non_su_procs}" == "0" ]]; then
 	${SUSFS_BIN} hide_sus_mnts_for_non_su_procs 0
 fi
 
+# Uname Spoofing
 #### Spoof the uname, effective for all processes ####
 # you can get your uname args by running 'uname {-r|-v}' on your stock ROM #
 # pass 'default' to tell susfs to use the default value by uname #
@@ -157,6 +158,12 @@ elif [[ "${config_uname_spoofing}" == "1" ]]; then
 			echo "##############"
 		} >> "${PERSISTENT_DIR}/logs.txt"
 	fi
+
+	slot=$(resetprop ro.boot.slot_suffix)
+	kernel_version=$(strings "/dev/block/by-name/boot${slot}" | grep "Linux version" | awk '{print $3}' | cut -d'-' -f1)
+	kmi=$(${KSU_BIN} boot-info current-kmi | cut -d'-' -f1)
+	config_uname_kernel_release="${kernel_version}-${kmi}-9-g690101101069"
+	config_uname_kernel_version="#1 SMP PREEMPT $(resetprop ro.build.date | tr -s ' ')"
 
 	brene_set_uname "${config_uname_kernel_release}" "${config_uname_kernel_version}"
 fi
