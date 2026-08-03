@@ -1,6 +1,6 @@
 # Changelog
 
-# BRENE v0.0.57 - Supports SuSFS 2.2.0+
+# PSD v0.0.57 - Supports SuSFS 2.2.0+
 
 - improve: refactor repo
 - improve: Uname Spoofing and fix bugs
