@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2154
 PATH=/data/adb/ksu/bin:$PATH
 MODDIR=${0%/*}
 KSU_BIN=/data/adb/ksud
@@ -8,19 +9,19 @@ PERSISTENT_DIR=/data/adb/brene
 DEST_BIN_DIR=/data/adb/ksu/bin
 
 ## susfs_clone_perm <file/or/dir/perm/to/be/changed> <file/or/dir/to/clone/from>
-# susfs_clone_perm() {
-# 	TO=$1
-# 	FROM=$2
-# 	if [[ -z "${TO}" -o -z "${FROM}" ]]; then
-# 		return
-# 	fi
-# 	## stat https://github.com/backslashxx/bindhosts/commit/427f18fe0b212ef2754e79c8aaaa72cb59ad253d#diff-8cb0da3b1680ce3a9f3263622042aa6f0250431fa5069513664650a17c48fdabR15
-# 	CLONED_PERM_STRING=$(stat -c "%a %U %G" "${FROM}")
-# 	set "${CLONED_PERM_STRING}"
-# 	chmod "$1" "${TO}"
-# 	chown "$2":"$3" "${TO}"
-# 	busybox chcon --reference="${FROM}" "${TO}"
-# }
+susfs_clone_perm() {
+	TO=$1
+	FROM=$2
+	if [ -z "${TO}" -o -z "${FROM}" ]; then
+		return
+	fi
+	## stat https://github.com/backslashxx/bindhosts/commit/427f18fe0b212ef2754e79c8aaaa72cb59ad253d#diff-8cb0da3b1680ce3a9f3263622042aa6f0250431fa5069513664650a17c48fdabR15
+	CLONED_PERM_STRING=$(stat -c "%a %U %G" ${FROM})
+	set ${CLONED_PERM_STRING}
+	chmod $1 ${TO}
+	chown $2:$3 ${TO}
+	busybox chcon --reference=${FROM} ${TO}
+}
 
 # susfs_list_full_file_access_for_third_party_apps() {
 # 	local TARGET_PERMISSION="android.permission.MANAGE_EXTERNAL_STORAGE"

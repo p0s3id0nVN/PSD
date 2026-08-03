@@ -1,3 +1,5 @@
+# shellcheck disable=SC2154
+# shellcheck disable=SC2148
 # Remove "..5.u.S"
 TARGET="..5.u.S"
 TARGET1="/sdcard/${TARGET}"

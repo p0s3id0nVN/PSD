@@ -1,4 +1,5 @@
-# #!/bin/bash
+#!/bin/bash
+# shellcheck disable=SC2154
 # MODDIR=${0%/*}
 # KSU_BIN=/data/adb/ksud
 # KSU_MODULES_DIR=/data/adb/modules

@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2154
 MODDIR=${0%/*}
 KSU_BIN=/data/adb/ksud
 KSU_MODULES_DIR=/data/adb/modules
@@ -138,7 +139,23 @@ fi
 # you can get your uname args by running 'uname {-r|-v}' on your stock ROM #
 # pass 'default' to tell susfs to use the default value by uname #
 # ${SUSFS_BIN} set_uname 'default' 'default'
-if [[ "${config_custom_uname_spoofing}" == "1" ]]; then
+if [[ "${config_uname_spoofing}" == "1" ]]; then
+	if [[ "${config_brene_logs}" == "1" ]]; then
+		{
+			echo ""
+			echo "##############"
+			echo "Uname Spoofing"
+			echo "##############"
+		} >> "${PERSISTENT_DIR}/logs.txt"
+	fi
+
+	kernel_version=$(cat /proc/version | awk '{print $3}' | cut -d'-' -f1)
+	kmi=$(${KSU_BIN} boot-info current-kmi | cut -d'-' -f1)
+	uname_kernel_release="${kernel_version}-${kmi}-9-g690101101069"
+	uname_kernel_version="#1 SMP PREEMPT $(resetprop ro.build.date | tr -s ' ')"
+
+	brene_set_uname "${uname_kernel_release}" "${uname_kernel_version}"
+elif [[ "${config_custom_uname_spoofing}" == "1" ]]; then
 	if [[ "${config_brene_logs}" == "1" ]]; then
 		{
 			echo ""
@@ -149,23 +166,6 @@ if [[ "${config_custom_uname_spoofing}" == "1" ]]; then
 	fi
 
 	brene_set_uname "${config_custom_uname_kernel_release}" "${config_custom_uname_kernel_version}"
-elif [[ "${config_uname_spoofing}" == "1" ]]; then
-	if [[ "${config_brene_logs}" == "1" ]]; then
-		{
-			echo ""
-			echo "##############"
-			echo "Uname Spoofing"
-			echo "##############"
-		} >> "${PERSISTENT_DIR}/logs.txt"
-	fi
-
-	slot=$(resetprop ro.boot.slot_suffix)
-	kernel_version=$(strings "/dev/block/by-name/boot${slot}" | grep "Linux version" | awk '{print $3}' | cut -d'-' -f1)
-	kmi=$(${KSU_BIN} boot-info current-kmi | cut -d'-' -f1)
-	config_uname_kernel_release="${kernel_version}-${kmi}-9-g690101101069"
-	config_uname_kernel_version="#1 SMP PREEMPT $(resetprop ro.build.date | tr -s ' ')"
-
-	brene_set_uname "${config_uname_kernel_release}" "${config_uname_kernel_version}"
 fi
 
 ## Disable susfs kernel log ##

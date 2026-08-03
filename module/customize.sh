@@ -1,9 +1,13 @@
 #!/bin/bash
+# shellcheck disable=SC2154
 KSU_BIN=/data/adb/ksud
 KSU_MODULES_DIR=/data/adb/modules
 SUSFS_BIN=/data/adb/ksu/bin/susfs
 PERSISTENT_DIR=/data/adb/brene
 DEST_BIN_DIR=/data/adb/ksu/bin
+
+# Load utils
+[[ -e "${MODPATH}/utils.sh" ]] && source "${MODPATH}/utils.sh"
 
 # Hot Install Support
 export MODULE_HOT_INSTALL_REQUEST="true"
@@ -43,6 +47,9 @@ ln -f -s "${DEST_BIN_DIR}/susfs" "${DEST_BIN_DIR}/ksu_susfs" 2> /dev/null || tru
 # else
 # 	abort "[❌] Not detected SuSFS version!"
 # fi
+
+# Reset module description
+${KSU_BIN} module config set override.description "[Module Status: ⏱️ | SuSFS Patches: ⏱️] A SuSFS/KernelSU module for SuSFS patched kernels"
 
 # Disable other SuSFS modules
 [[ -e "${KSU_MODULES_DIR}/susfs4ksu" ]] && {

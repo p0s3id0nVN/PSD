@@ -1,4 +1,5 @@
 #!/bin/bash
+# shellcheck disable=SC2154
 MODDIR=${0%/*}
 KSU_BIN=/data/adb/ksud
 KSU_MODULES_DIR=/data/adb/modules
@@ -12,14 +13,13 @@ DEST_BIN_DIR=/data/adb/ksu/bin
 [[ -e "${PERSISTENT_DIR}/config.sh" ]] && source "${PERSISTENT_DIR}/config.sh"
 
 # Update Description
+susfs_ver=$(${SUSFS_BIN} show version)
 description="A SuSFS/KernelSU module for SuSFS patched kernels"
-susfs_ver=$(${SUSFS_BIN} show version 2> /dev/null)
 if [[ -n "${susfs_ver}" ]]; then
-	status="[Module Status: ✅ | SuSFS Patches: ✅ ${susfs_ver}+]\\\\n"
+	${KSU_BIN} module config set override.description "[Module Status: ✅ | SuSFS Patches: ✅ ${susfs_ver}] ${description}"
 else
-	status="[Module Status: ❌ | SuSFS Patches: ❌]\\\\n"
+	${KSU_BIN} module config set override.description "[Module Status: ❌ | SuSFS Patches: ❌] ${description}"
 fi
-sed -i "s#^description=.*#description=${status}${description}#" "${MODDIR}/module.prop"
 
 # SU Compat
 if [[ "${config_su_compat}" == "1" ]]; then
@@ -77,7 +77,7 @@ fi
 # Remove Play Integrity Fix Properties
 if [[ "${config_pif_props}" == "1" ]]; then
 	resetprop | grep -iE "pihook|pixelprops|spoof" | awk -F'[][]' '{print $2}' | while read -r prop; do
-		resetprop -d "${prop}"
+		resetprop -d -p "${prop}"
 	done
 fi
 
@@ -434,6 +434,23 @@ if [[ "${config_lineage_paths_hiding}" == "1" ]]; then
 	find /system /system_ext /vendor /product -iname "*lineage*" | while read -r path; do
 		brene_sus_map "${path}"
 		brene_sus_path_loop "${path}"
+	done
+fi
+
+# LineageOS Sepolicy Traces Hiding
+if [[ "${config_lineage_sepolicy_traces_hiding}" == "1" ]]; then
+	find /system /system_ext /vendor /product -iname "*sepolicy.cil" | while read -r path; do
+		file_name=$(basename "${path}")
+		fake_file_path="${PERSISTENT_DIR}/fake_files/${file_name}"
+
+		[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
+		[[ ! -f "${fake_file_path}" ]] && {
+			cp "${path}" "${PERSISTENT_DIR}/fake_files"
+			sed -i "s/lineage//g" "${fake_file_path}"
+			susfs_clone_perm "${fake_file_path}" "${path}"
+		}
+
+		${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
 	done
 fi
 
