@@ -1,6 +1,6 @@
 # Changelog
 
-# BRENE v0.0.58 - Supports SuSFS 2.2.0+
+# PSD v0.0.58 - Supports SuSFS 2.2.0+
 
 - add: new toggle "/system/lib64/libstagefright.so Spoofing"
 - webui: add "Device Model" indicator
