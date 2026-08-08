@@ -39,6 +39,14 @@
 			<section class="tab-panel active" data-panel="status">
 				<p class="section-label">General</p>
 				<div class="card-group">
+					<div class="card-row" id="device-model">
+						<div class="card-row__body">
+							<span class="card-row__title">Device Model</span>
+							<span class="card-row__sub">_</span>
+						</div>
+						<md-ripple></md-ripple>
+					</div>
+
 					<div class="card-row" id="android-version">
 						<div class="card-row__body">
 							<span class="card-row__title">Android Version</span>
@@ -237,6 +245,15 @@
 							<span class="card-row__sub">Enable or disable wireless debugging</span>
 						</div>
 						<md-switch icons id="wireless_debugging"></md-switch>
+						<md-ripple></md-ripple>
+					</div>
+
+					<div class="card-row">
+						<div class="card-row__body">
+							<span class="card-row__title">Max Saturation</span>
+							<span class="card-row__sub">Enable or disable max saturation</span>
+						</div>
+						<md-switch icons id="saturation"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
 				</div>
@@ -479,13 +496,21 @@
 				<div class="card-group">
 					<div class="card-row">
 						<div class="card-row__body">
-							<span class="card-row__title">Android System Properties Spoofing</span>
+							<span class="card-row__title">Spoof Android System Properties</span>
 							<span class="card-row__sub">Spoof some android system properties</span>
 							<span class="card-row__tag--code">Example of detections:</span>
 							<span class="card-row__tag--code">[ro.build.type]: [userdebug]</span>
 							<span class="card-row__tag--code">[ro.boot.flash.locked]: [0]</span>
 						</div>
-						<md-switch icons id="android_system_properties_spoofing"></md-switch>
+						<md-switch icons id="spoof_system_properties"></md-switch>
+						<md-ripple></md-ripple>
+					</div>
+
+					<div class="card-row">
+						<div class="card-row__body">
+							<span class="card-row__title">Spoof Android System Properties Every Minute</span>
+						</div>
+						<md-switch icons id="spoof_system_properties_repeat"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
 
@@ -546,7 +571,7 @@
 					<div class="card-row">
 						<div class="field-stack">
 							<md-outlined-text-field label="Kernel Release" placeholder="e.g. 5.10.123-android12-9-g690101101069" id="custom_uname_release"></md-outlined-text-field>
-							<md-outlined-text-field label="Kernel Version" placeholder="e.g. #1 SMP PREEMPT Wed Jun 9 03:20:30 UTC 2069" id="custom_uname_version"></md-outlined-text-field>
+							<!-- <md-outlined-text-field label="Kernel Version" placeholder="e.g. #1 SMP PREEMPT Wed Jun 9 03:20:30 UTC 2069" id="custom_uname_version"></md-outlined-text-field> -->
 							<div class="btn-row">
 								<md-outlined-button id="button_custom_uname_reset">RESET</md-outlined-button>
 								<md-filled-button id="button_custom_uname_apply">APPLY</md-filled-button>
@@ -579,23 +604,34 @@
 				<div class="card-group">
 					<div class="card-row">
 						<div class="card-row__body">
-							<span class="card-row__title">LineageOS Paths Hiding</span>
+							<span class="card-row__title">Hide Custom ROM Paths</span>
 							<span class="card-row__sub">Important Notes:</span>
 							<span class="card-row__sub">Disable umount for your app if it does not work</span>
+							<span class="card-row__sub">Example: Web Browsers</span>
 							<span class="card-row__tag--code">Example of detections:</span>
 							<span class="card-row__tag--code">/system/framework/org.lineageos.platform-res.apk</span>
 						</div>
-						<md-switch icons id="lineage_paths_hiding"></md-switch>
+						<md-switch icons id="hide_custom_rom_paths"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
 
 					<div class="card-row">
 						<div class="card-row__body">
-							<span class="card-row__title">LineageOS Sepolicy Traces Hiding</span>
+							<span class="card-row__title">Hide LineageOS Strings</span>
 							<span class="card-row__tag--code">Example of detections:</span>
 							<span class="card-row__tag--code">/product/etc/selinux/product_sepolicy.cil</span>
 						</div>
-						<md-switch icons id="lineage_sepolicy_traces_hiding"></md-switch>
+						<md-switch icons id="hide_lineage_strings"></md-switch>
+						<md-ripple></md-ripple>
+					</div>
+
+					<div class="card-row">
+						<div class="card-row__body">
+							<span class="card-row__title">/system/lib64/libstagefright.so Spoofing</span>
+							<!-- <span class="card-row__tag--code">Example of detections:</span> -->
+							<!-- <span class="card-row__tag--code"></span> -->
+						</div>
+						<md-switch icons id="libstagefright_spoofing"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
 

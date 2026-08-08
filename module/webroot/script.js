@@ -39,6 +39,10 @@ const configs = [
 		id: 'selinux',
 		action: (enabled) => setFeature(`setenforce ${enabled ? 1 : 0}`),
 	},
+	{
+		id: 'saturation',
+		action: (enabled) => setFeature(`service call SurfaceFlinger 1022 f ${enabled ? 2.0 : 1.0}`),
+	},
 	{ id: 'pif_props' },
 	{ id: 'rom_props' },
 	{ id: 'brene_logs' },
@@ -46,15 +50,17 @@ const configs = [
 	{ id: 'hide_addon_d' },
 	{ id: 'uname_spoofing' },
 	{ id: 'hide_injections' },
-	{ id: 'lineage_paths_hiding' },
 	{ id: 'hide_suspicious_ptys' },
+	{ id: 'hide_lineage_strings' },
+	{ id: 'hide_custom_rom_paths' },
 	{ id: 'custom_uname_spoofing' },
 	{ id: 'hide_framework_res_apk' },
+	{ id: 'libstagefright_spoofing' },
 	{ id: 'enable_avc_log_spoofing' },
 	{ id: 'umount_suspicious_mounts' },
-	{ id: 'lineage_sepolicy_traces_hiding' },
 	{ id: 'proc_cmdline_bootconfig_spoofing' },
-	{ id: 'android_system_properties_spoofing' },
+	{ id: 'spoof_system_properties' },
+	{ id: 'spoof_system_properties_repeat' },
 
 	{ id: 'paths_hiding__non_standard_sdcard' },
 	{ id: 'paths_hiding__non_standard_sdcard_android' },
@@ -101,6 +107,17 @@ exec('uname -r').then((result) => {
 		return
 	}
 	container.innerText = result.stdout
+})
+
+// Load Device Model Status
+exec('resetprop ro.product.manufacturer && resetprop ro.product.model && resetprop ro.build.product').then((result) => {
+	const container = document.querySelector('#device-model .card-row__sub')
+
+	if (result.errno !== 0) {
+		container.innerText = 'Failed to load'
+		return
+	}
+	container.innerText = result.stdout.replace('\n', ' ').replace('\n', ' | ')
 })
 
 // Load Custom ROM Status
@@ -264,7 +281,7 @@ exec(`cat ${PERSISTENT_DIR}/config.sh`).then((result) => {
 
 	// custom uname
 	document.getElementById('custom_uname_release').value = configValues['config_custom_uname_kernel_release']
-	document.getElementById('custom_uname_version').value = configValues['config_custom_uname_kernel_version']
+	// document.getElementById('custom_uname_version').value = configValues['config_custom_uname_kernel_version']
 
 	// Verified Boot Hash
 	document.getElementById('verified_boot_hash_text_field').value = configValues['config_verified_boot_hash']
@@ -311,18 +328,20 @@ exec(`cat ${PERSISTENT_DIR}/config.sh`).then((result) => {
 // Custom Uname buttons
 ;(async () => {
 	const unameRelease = document.getElementById('custom_uname_release')
-	const unameVersion = document.getElementById('custom_uname_version')
-	const updateUname = (release, version) => {
+	// const unameVersion = document.getElementById('custom_uname_version')
+	const updateUname = (release) => {
 		updateConfig2('config_custom_uname_kernel_release', release)
-		updateConfig2('config_custom_uname_kernel_version', version.trim() === '' ? 'default' : version)
-		setFeature(`susfs set_uname "${release}" "${version}"`)
+		// updateConfig2('config_custom_uname_kernel_version', version.trim() === '' ? 'default' : version)
+		// setFeature(`susfs set_uname "${release}" "${version}"`)
 		unameRelease.value = release
-		unameVersion.value = version.trim() === '' ? 'default' : version
+		// unameVersion.value = version.trim() === '' ? 'default' : version
 	}
 
-	document.getElementById(`button_custom_uname_reset`).onclick = () => updateUname('default', 'default')
+	document.getElementById(`button_custom_uname_reset`).onclick = () => {
+		updateUname('default')
+	}
 	document.getElementById(`button_custom_uname_apply`).onclick = () => {
-		if (unameRelease.value !== '') updateUname(unameRelease.value, unameVersion.value)
+		if (unameRelease.value !== '') updateUname(unameRelease.value)
 	}
 })()
 

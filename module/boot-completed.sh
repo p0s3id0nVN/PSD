@@ -6,6 +6,7 @@ KSU_MODULES_DIR=/data/adb/modules
 SUSFS_BIN=/data/adb/ksu/bin/susfs
 PERSISTENT_DIR=/data/adb/brene
 DEST_BIN_DIR=/data/adb/ksu/bin
+CUSTOM_ROM_NAMES="lineage|infinity|evolution|crdroid|mistos|axion|pixelos|rising|lunaris|halcyon|havoc|alphadroid|bliss|calyx|derpfest|graphene|lmodroid|lumine|matrixx|clover|yaap|aospa"
 
 # Load utils
 [[ -e "${MODDIR}/utils.sh" ]] && source "${MODDIR}/utils.sh"
@@ -66,8 +67,7 @@ fi
 
 # Remove Custom ROM Properties
 if [[ "${config_rom_props}" == "1" ]]; then
-	crom="lineage|infinity|evolution|crdroid|arrow|mistos|axion|pixelos|rising|lunaris|halcyon|havoc|alphadroid|avium|bliss|calyx|derpfest|graphene|lmodroid|lumine|matrixx|superior|clover|yaap"
-	resetprop | grep -iE "${crom}" | awk -F'[][]' '{print $2}' | while read -r prop; do
+	resetprop | grep -iE "${CUSTOM_ROM_NAMES}" | awk -F'[][]' '{print $2}' | while read -r prop; do
 		resetprop -d "${prop}"
 	done
 
@@ -79,6 +79,11 @@ if [[ "${config_pif_props}" == "1" ]]; then
 	resetprop | grep -iE "pihook|pixelprops|spoof" | awk -F'[][]' '{print $2}' | while read -r prop; do
 		resetprop -d -p "${prop}"
 	done
+fi
+
+# Max Saturation
+if [[ "${config_saturation}" == "1" ]]; then
+	service call SurfaceFlinger 1022 f 2.0
 fi
 
 #### Hide some sus paths, effective only for processes that are marked umounted with uid >= 10000 ####
@@ -366,8 +371,7 @@ if [[ "${config_hide_framework_res_apk}" == "1" ]]; then
 	done
 fi
 
-# Android System Properties Spoofing
-if [[ "${config_android_system_properties_spoofing}" == "1" ]]; then
+spoof_android_system_properties() {
 	resetprop_n "init.svc.adbd" "stopped"
 	resetprop_n "init.svc_debug_pid.adbd" ""
 	resetprop_n "persist.sys.usb.config" "mtp"
@@ -383,10 +387,8 @@ if [[ "${config_android_system_properties_spoofing}" == "1" ]]; then
 	resetprop_n "ro.is_ever_orange" "0"
 	resetprop_n "ro.bootmode" "normal"
 	resetprop_n "ro.bootimage.build.tags" "release-keys"
-
 	resetprop_n "ro.build.type" "user"
 	resetprop_n "ro.build.tags" "release-keys"
-
 	resetprop_n "vendor.boot.vbmeta.device_state" "locked"
 	resetprop_n "vendor.boot.verifiedbootstate" "green"
 
@@ -409,19 +411,46 @@ if [[ "${config_android_system_properties_spoofing}" == "1" ]]; then
 	if_prop_value_exits_resetprop_n "ro.vendor.warranty_bit" "0"
 	if_prop_value_exits_resetprop_n "ro.boot.warranty_bit" "0"
 
-	fingerprint=$(resetprop ro.build.fingerprint)
-	resetprop_n "ro.build.fingerprint" "${fingerprint//userdebug/user}"
+	fingerprint_value=$(resetprop ro.build.fingerprint)
+	new_fingerprint_value="${fingerprint_value//userdebug/user}"
+	resetprop_n "ro.bootimage.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.odm.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.product.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.system.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.system_dlkm.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.system_ext.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.vendor.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.vendor_dlkm.build.fingerprint" "${new_fingerprint_value}"
 
 	## Delete some prop names for newer pixel device ##
 	resetprop -d "ro.boot.verifiedbooterror"
 	resetprop -d "ro.boot.verifyerrorpart"
 	resetprop -d "crashrecovery.rescue_boot_count"
 
+	resetprop -d service.adb.root
+	resetprop -d service.adb.tcp.port
+
 	if [[ "$(resetprop ro.build.version.sdk)" -ge "36" ]]; then
 		resetprop -d sys.oem_unlock_allowed
 	else
 		resetprop_n "sys.oem_unlock_allowed" "0"
 	fi
+
+	resetprop -c --force
+}
+
+# Spoof Android System Properties
+if [[ "${config_spoof_system_properties}" == "1" ]]; then
+	spoof_android_system_properties
+fi
+
+# Spoof Android System Properties Every Minute
+if [[ "${config_spoof_system_properties_repeat}" == "1" ]]; then
+	while true; do
+		sleep 60
+		spoof_android_system_properties
+	done &
 fi
 
 # Android Verified Boot Hash Spoofing
@@ -429,17 +458,23 @@ if [[ "${config_verified_boot_hash}" != '' ]]; then
 	resetprop_n "ro.boot.vbmeta.digest" "${config_verified_boot_hash}"
 fi
 
-# LineageOS Paths Hiding
-if [[ "${config_lineage_paths_hiding}" == "1" ]]; then
-	find /system /system_ext /vendor /product -iname "*lineage*" | while read -r path; do
-		brene_sus_map "${path}"
-		brene_sus_path_loop "${path}"
+# Hide Custom ROM Paths
+if [[ "${config_hide_custom_rom_paths}" == "1" ]]; then
+	for i in ${CUSTOM_ROM_NAMES//|/ }; do
+		find /system /system_ext /vendor /product -iname "*${i}*" | while read -r path; do
+			brene_sus_map "${path}"
+			brene_sus_path_loop "${path}"
+		done
+
+		find /data -maxdepth 1 -iname "*${i}*" | while read -r path; do
+			brene_sus_path_loop "${path}"
+		done
 	done
 fi
 
-# LineageOS Sepolicy Traces Hiding
-if [[ "${config_lineage_sepolicy_traces_hiding}" == "1" ]]; then
-	find /system /system_ext /vendor /product -iname "*sepolicy.cil" | while read -r path; do
+# Hide LineageOS Strings
+if [[ "${config_hide_lineage_strings}" == "1" ]]; then
+	find /system /system_ext /vendor /product \( -iname "*sepolicy.cil" -o -iname "*file_contexts" \) | while read -r path; do
 		file_name=$(basename "${path}")
 		fake_file_path="${PERSISTENT_DIR}/fake_files/${file_name}"
 
@@ -452,6 +487,21 @@ if [[ "${config_lineage_sepolicy_traces_hiding}" == "1" ]]; then
 
 		${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
 	done
+fi
+
+# /system/lib64/libstagefright.so Spoofing
+if [[ "${config_libstagefright_spoofing}" == "1" ]]; then
+	path=/system/lib64/libstagefright.so
+	file_name=$(basename "${path}")
+	fake_file_path="${PERSISTENT_DIR}/fake_files/${file_name}"
+
+	[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
+	[[ ! -f "${fake_file_path}" ]] && {
+		touch "${fake_file_path}"
+		susfs_clone_perm "${fake_file_path}" "${path}"
+	}
+
+	${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
 fi
 
 # Hide /system/addon.d Path
