@@ -1,6 +1,6 @@
 # Changelog
 
-# BRENE v0.0.59 - Supports SuSFS 2.2.0+
+# PSD v0.0.59 - Supports SuSFS 2.2.0+
 
 - change: disable "Max Saturation" by default
 - change: disable "Non-standard /sdcard Paths" by default
