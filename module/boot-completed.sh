@@ -416,12 +416,25 @@ spoof_android_system_properties() {
 	resetprop_n "ro.bootimage.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.odm.build.fingerprint" "${new_fingerprint_value}"
+	resetprop_n "ro.odm_dlkm.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.product.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.system.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.system_dlkm.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.system_ext.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.vendor.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.vendor_dlkm.build.fingerprint" "${new_fingerprint_value}"
+
+	new_utc_value=$(resetprop ro.build.date.utc)
+	resetprop_n "ro.bootimage.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.odm.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.odm_dlkm.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.product.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.system.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.system_dlkm.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.system_ext.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.vendor.build.date.utc" "${new_utc_value}"
+	resetprop_n "ro.vendor_dlkm.build.date.utc" "${new_utc_value}"
 
 	## Delete some prop names for newer pixel device ##
 	resetprop -d "ro.boot.verifiedbooterror"
@@ -456,57 +469,6 @@ fi
 # Android Verified Boot Hash Spoofing
 if [[ "${config_verified_boot_hash}" != '' ]]; then
 	resetprop_n "ro.boot.vbmeta.digest" "${config_verified_boot_hash}"
-fi
-
-# Hide Custom ROM Paths
-if [[ "${config_hide_custom_rom_paths}" == "1" ]]; then
-	for i in ${CUSTOM_ROM_NAMES//|/ }; do
-		find /system /system_ext /vendor /product -iname "*${i}*" | while read -r path; do
-			brene_sus_map "${path}"
-			brene_sus_path_loop "${path}"
-		done
-
-		find /data -maxdepth 1 -iname "*${i}*" | while read -r path; do
-			brene_sus_path_loop "${path}"
-		done
-	done
-fi
-
-# Hide LineageOS Strings
-if [[ "${config_hide_lineage_strings}" == "1" ]]; then
-	find /system /system_ext /vendor /product \( -iname "*sepolicy.cil" -o -iname "*file_contexts" \) | while read -r path; do
-		file_name=$(basename "${path}")
-		fake_file_path="${PERSISTENT_DIR}/fake_files/${file_name}"
-
-		[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
-		[[ ! -f "${fake_file_path}" ]] && {
-			cp "${path}" "${PERSISTENT_DIR}/fake_files"
-			sed -i "s/lineage//g" "${fake_file_path}"
-			susfs_clone_perm "${fake_file_path}" "${path}"
-		}
-
-		${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
-	done
-fi
-
-# /system/lib64/libstagefright.so Spoofing
-if [[ "${config_libstagefright_spoofing}" == "1" ]]; then
-	path=/system/lib64/libstagefright.so
-	file_name=$(basename "${path}")
-	fake_file_path="${PERSISTENT_DIR}/fake_files/${file_name}"
-
-	[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
-	[[ ! -f "${fake_file_path}" ]] && {
-		touch "${fake_file_path}"
-		susfs_clone_perm "${fake_file_path}" "${path}"
-	}
-
-	${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
-fi
-
-# Hide /system/addon.d Path
-if [[ "${config_hide_addon_d}" == "1" ]]; then
-	brene_sus_path "/system/addon.d"
 fi
 
 resetprop -c --force

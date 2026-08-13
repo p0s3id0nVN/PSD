@@ -7,9 +7,9 @@ config_paths_hiding__sdcard_android_data_media_obb=1
 
 config_selinux=1
 config_su_compat=1
+config_spoof_uname=1
 config_selinux_hide=1
 config_kernel_umount=1
-config_uname_spoofing=1
 config_hide_injections=1
 config_hide_suspicious_ptys=1
 config_enable_avc_log_spoofing=1
@@ -17,7 +17,7 @@ config_umount_suspicious_mounts=1
 config_hide_sus_mnts_for_non_su_procs=1
 config_proc_cmdline_bootconfig_spoofing=1
 config_spoof_system_properties=1
-config_spoof_system_properties_repeat=1
+config_spoof_system_properties_repeat=0
 
 config_pif_props=0
 config_rom_props=0
@@ -28,12 +28,12 @@ config_hide_addon_d=0
 config_usb_debugging=0
 config_hide_modules_img=0
 config_developer_options=0
+config_custom_spoof_uname=0
 config_wireless_debugging=0
 config_hide_lineage_strings=0
 config_hide_custom_rom_paths=0
-config_custom_uname_spoofing=0
 config_hide_framework_res_apk=0
-config_libstagefright_spoofing=0
+config_spoof_libstagefright=0
 
 config_verified_boot_hash=''
 config_custom_uname_kernel_release='default'

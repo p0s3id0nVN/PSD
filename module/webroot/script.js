@@ -47,15 +47,15 @@ const configs = [
 	{ id: 'rom_props' },
 	{ id: 'brene_logs' },
 	{ id: 'enable_log' },
+	{ id: 'spoof_uname' },
 	{ id: 'hide_addon_d' },
-	{ id: 'uname_spoofing' },
 	{ id: 'hide_injections' },
+	{ id: 'custom_spoof_uname' },
 	{ id: 'hide_suspicious_ptys' },
 	{ id: 'hide_lineage_strings' },
+	{ id: 'spoof_libstagefright' },
 	{ id: 'hide_custom_rom_paths' },
-	{ id: 'custom_uname_spoofing' },
 	{ id: 'hide_framework_res_apk' },
-	{ id: 'libstagefright_spoofing' },
 	{ id: 'enable_avc_log_spoofing' },
 	{ id: 'umount_suspicious_mounts' },
 	{ id: 'proc_cmdline_bootconfig_spoofing' },
@@ -77,14 +77,16 @@ document.querySelectorAll('a[href]').forEach((element) => {
 })
 
 // Load Android Version
-exec('resetprop ro.build.version.release').then((result) => {
+exec('resetprop ro.build.version.release && resetprop ro.build.version.sdk').then((result) => {
 	const container = document.querySelector('#android-version .card-row__sub')
 
 	if (result.errno !== 0) {
 		container.innerText = 'Failed to load'
 		return
 	}
-	container.innerText = result.stdout
+	const results = result.stdout.replaceAll('\n', ' ')
+	const splits = results.split(' ')
+	container.innerText = `${splits[0]} (API ${splits[1]}) | SDK ${splits[1]}`
 })
 
 // Load SuSFS Variant
@@ -99,25 +101,37 @@ exec('susfs show variant').then((result) => {
 })
 
 // Load Kernel Version
-exec('uname -r').then((result) => {
+exec("cat /proc/version | awk '{print $3}' && uname -r").then((result) => {
 	const container = document.querySelector('#kernel-version .card-row__sub')
 
 	if (result.errno !== 0) {
 		container.innerText = 'Failed to load'
 		return
 	}
-	container.innerText = result.stdout
+	container.innerText = `Default: ${result.stdout.replace('\n', '\nSpoofed: ')}`
 })
 
 // Load Device Model Status
-exec('resetprop ro.product.manufacturer && resetprop ro.product.model && resetprop ro.build.product').then((result) => {
+exec('resetprop ro.product.manufacturer && resetprop ro.product.model && resetprop ro.product.device').then((result) => {
 	const container = document.querySelector('#device-model .card-row__sub')
 
 	if (result.errno !== 0) {
 		container.innerText = 'Failed to load'
 		return
 	}
-	container.innerText = result.stdout.replace('\n', ' ').replace('\n', ' | ')
+
+	let model
+	const splits = result.stdout.split('\n')
+
+	exec('resetprop ro.product.marketname')
+		.then((result) => {
+			if (result.errno !== 0) return
+			model = result.stdout
+		})
+		.then(() => {
+			model = model || splits[1]
+			container.innerText = `${splits[0]} ${model} | ${splits[2]}`
+		})
 })
 
 // Load Custom ROM Status
