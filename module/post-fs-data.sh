@@ -72,9 +72,9 @@ if [[ "${config_spoof_libstagefright}" == "1" ]]; then
 	[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
 	[[ ! -f "${fake_file_path}" ]] && {
 		touch "${fake_file_path}"
-		susfs_clone_perm "${fake_file_path}" "${path}"
 	}
 
+	susfs_clone_perm "${fake_file_path}" "${path}"
 	${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
 fi
 
@@ -101,7 +101,8 @@ fi
 # ${SUSFS_BIN} set_cmdline_or_bootconfig ${FAKE_PROC_CMDLINE_FILE}
 # EOF
 
-if [[ "${config_proc_cmdline_bootconfig_spoofing}" == "1" ]]; then
+# Spoof /proc/cmdline or /proc/bootconfig
+if [[ "${config_spoof_cmdline_or_bootconfig}" == "1" ]]; then
 	susfs_variant=$(${SUSFS_BIN} show variant)
 
 	if [[ "${susfs_variant}" == "GKI" ]]; then
@@ -171,7 +172,10 @@ if [[ "${config_spoof_uname}" == "1" ]]; then
 	uname_kernel_version="#1 SMP PREEMPT $(resetprop ro.build.date | tr -s ' ')"
 
 	brene_set_uname "${uname_kernel_release}" "${uname_kernel_version}"
-elif [[ "${config_custom_spoof_uname}" == "1" ]]; then
+fi
+
+# Custom Spoof Uname
+if [[ "${config_custom_spoof_uname}" == "1" ]]; then
 	if [[ "${config_brene_logs}" == "1" ]]; then
 		{
 			echo ""
@@ -220,10 +224,26 @@ if [[ "${config_hide_lineage_strings}" == "1" ]]; then
 		[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
 		[[ ! -f "${fake_file_path}" ]] && {
 			touch "${fake_file_path}"
-			susfs_clone_perm "${fake_file_path}" "${path}"
 		}
 
+		susfs_clone_perm "${fake_file_path}" "${path}"
 		${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
+	done
+fi
+
+# Hide Suspicious PTYs
+if [[ "${config_hide_suspicious_pty}" == "1" ]]; then
+	if [[ "${config_brene_logs}" == "1" ]]; then
+		{
+			echo ""
+			echo "####################"
+			echo "Hide Suspicious PTYs"
+			echo "####################"
+		} >> "${PERSISTENT_DIR}/logs.txt"
+	fi
+
+	for i in $(seq 0 5); do
+		brene_sus_path_loop "/dev/pts/${i}"
 	done
 fi
 

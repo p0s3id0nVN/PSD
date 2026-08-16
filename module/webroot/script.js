@@ -43,6 +43,10 @@ const configs = [
 		id: 'saturation',
 		action: (enabled) => setFeature(`service call SurfaceFlinger 1022 f ${enabled ? 2.0 : 1.0}`),
 	},
+	{
+		id: 'show_refresh_rate',
+		action: (enabled) => setFeature(`service call SurfaceFlinger 1034 i32 ${enabled ? 1 : 0}`),
+	},
 	{ id: 'pif_props' },
 	{ id: 'rom_props' },
 	{ id: 'brene_logs' },
@@ -51,14 +55,16 @@ const configs = [
 	{ id: 'hide_addon_d' },
 	{ id: 'hide_injections' },
 	{ id: 'custom_spoof_uname' },
-	{ id: 'hide_suspicious_ptys' },
+	{ id: 'hide_suspicious_pty' },
+	{ id: 'hide_custom_recovery' },
 	{ id: 'hide_lineage_strings' },
 	{ id: 'spoof_libstagefright' },
 	{ id: 'hide_custom_rom_paths' },
 	{ id: 'hide_framework_res_apk' },
 	{ id: 'enable_avc_log_spoofing' },
 	{ id: 'umount_suspicious_mounts' },
-	{ id: 'proc_cmdline_bootconfig_spoofing' },
+	{ id: 'spoof_cmdline_or_bootconfig' },
+	{ id: 'fix_data_local_tmp_inconsistencies' },
 	{ id: 'spoof_system_properties' },
 	{ id: 'spoof_system_properties_repeat' },
 
@@ -199,7 +205,7 @@ exec('ksud module list').then((result) => {
 		const statusSpan = row.querySelector('.status-text')
 
 		if (moduleIds.includes(moduleKey)) {
-			statusSpan.innerText = 'Status: Installed ❌'
+			statusSpan.innerText = 'Status: Installed'
 			statusSpan.style.color = '#ff0000be'
 		}
 	})
@@ -297,9 +303,6 @@ exec(`cat ${PERSISTENT_DIR}/config.sh`).then((result) => {
 	document.getElementById('custom_uname_release').value = configValues['config_custom_uname_kernel_release']
 	// document.getElementById('custom_uname_version').value = configValues['config_custom_uname_kernel_version']
 
-	// Verified Boot Hash
-	document.getElementById('verified_boot_hash_text_field').value = configValues['config_verified_boot_hash']
-
 	// toggle
 	configs.forEach((config) => {
 		const configId = `config_${config.id}`
@@ -357,17 +360,6 @@ exec(`cat ${PERSISTENT_DIR}/config.sh`).then((result) => {
 	document.getElementById(`button_custom_uname_apply`).onclick = () => {
 		if (unameRelease.value !== '') updateUname(unameRelease.value)
 	}
-})()
-
-// Verified Boot Hash
-;(async () => {
-	const textField = document.getElementById('verified_boot_hash_text_field')
-	const button = document.getElementById('verified_boot_hash_button')
-
-	button.addEventListener('click', () => {
-		updateConfig2('config_verified_boot_hash', textField.value)
-		toast('Success')
-	})
 })()
 
 //

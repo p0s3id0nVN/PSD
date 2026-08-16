@@ -213,6 +213,14 @@
 						</div>
 						<md-ripple></md-ripple>
 					</div>
+
+					<div class="card-row" data-module="rod">
+						<div class="card-row__body">
+							<span class="card-row__title">ROD-Manager</span>
+							<span class="card-row__sub status-text">Status: Not installed</span>
+						</div>
+						<md-ripple></md-ripple>
+					</div>
 				</div>
 			</section>
 
@@ -254,6 +262,15 @@
 						<md-switch icons id="saturation"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
+
+					<div class="card-row">
+						<div class="card-row__body">
+							<span class="card-row__title">Show Refresh Rate</span>
+							<span class="card-row__sub">Show the current display refresh rate</span>
+						</div>
+						<md-switch icons id="show_refresh_rate"></md-switch>
+						<md-ripple></md-ripple>
+					</div>
 				</div>
 			</section>
 
@@ -265,6 +282,18 @@
 							<span class="card-row__title">Important Notes:</span>
 							<span class="card-row__sub">Only effective for umounted process with uid ≥ 10.000</span>
 						</div>
+						<md-ripple></md-ripple>
+					</div>
+
+					<div class="card-row">
+						<div class="card-row__body">
+							<span class="card-row__title">Hide Custom Recovery Paths</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">/sdcard/Fox</span>
+							<span class="card-row__tag--code">/sdcard/TWRP</span>
+							<span class="card-row__tag--code">/data/recovery</span>
+						</div>
+						<md-switch icons id="hide_custom_recovery"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
 
@@ -374,7 +403,7 @@
 							<span class="card-row__tag--code">Duck Detector:</span>
 							<span class="card-row__tag--code">- Found ROOT PTY</span>
 						</div>
-						<md-switch icons id="hide_suspicious_ptys"></md-switch>
+						<md-switch icons id="hide_suspicious_pty"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
 
@@ -514,14 +543,14 @@
 
 					<div class="card-row">
 						<div class="card-row__body">
-							<span class="card-row__title">/proc/cmdline or /proc/bootconfig Spoofing</span>
+							<span class="card-row__title">Spoof /proc/cmdline or /proc/bootconfig</span>
 							<span class="card-row__sub">Spoof the output of /proc/cmdline (non-gki) or /proc/bootconfig (gki) from a text file</span>
 							<span class="card-row__sub">No root process detects it for now, and this spoofing won't help much actually</span>
 							<span class="card-row__tag--code">Example of detections:</span>
 							<span class="card-row__tag--code">androidboot.warranty_bit = "1"</span>
 							<span class="card-row__tag--code">androidboot.verifiedbootstate = "orange"</span>
 						</div>
-						<md-switch icons id="proc_cmdline_bootconfig_spoofing"></md-switch>
+						<md-switch icons id="spoof_cmdline_or_bootconfig"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
 
@@ -573,24 +602,6 @@
 							<div class="btn-row">
 								<md-outlined-button id="button_custom_uname_reset">RESET</md-outlined-button>
 								<md-filled-button id="button_custom_uname_apply">APPLY</md-filled-button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<p class="section-label">Android Verified Boot Hash Spoofing</p>
-				<div class="card-group">
-					<div class="card-row">
-						<div class="field-stack">
-							<md-outlined-text-field
-								id="verified_boot_hash_text_field"
-								type="textarea"
-								label="Verified Boot Hash"
-								rows="3"
-								placeholder="e.g. df2352c282aj56e1489a3e220305hb827e54ba65a1293ab7409f2d46a3666b5a (64 digits)"
-							></md-outlined-text-field>
-							<div class="btn-row">
-								<md-filled-button id="verified_boot_hash_button">APPLY</md-filled-button>
 							</div>
 						</div>
 					</div>
@@ -691,6 +702,22 @@
 							<span class="card-row__sub">Enable or disable SuSFS Logs in kernel</span>
 						</div>
 						<md-switch icons id="enable_log"></md-switch>
+						<md-ripple></md-ripple>
+					</div>
+
+					<div class="card-row">
+						<div class="card-row__body">
+							<span class="card-row__title">Fix /data/local/tmp Inconsistencies</span>
+							<span class="card-row__tag--code">Example of detections:</span>
+							<span class="card-row__tag--code">Duck Detector:</span>
+							<span class="card-row__tag--code">- Expected mode 0771 for /data/local/tmp, but found 0777.</span>
+							<span class="card-row__tag--code">- Expected shell:shell (2000:2000) for /data/local/tmp, but found 3000:3000.</span>
+							<span class="card-row__tag--code">
+								- The inode for /data/local/tmp is 137011, above the heuristic review threshold 10000. This is weaker than owner/mode drift and can also reflect deletion or
+								recreation history.</span
+							>
+						</div>
+						<md-switch icons id="fix_data_local_tmp_inconsistencies"></md-switch>
 						<md-ripple></md-ripple>
 					</div>
 				</div>
