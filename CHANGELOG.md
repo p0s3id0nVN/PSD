@@ -1,6 +1,6 @@
 # Changelog
 
-# BRENE v0.0.60 - Supports SuSFS 2.2.0+
+# PSD v0.0.60 - Supports SuSFS 2.2.0+
 
 - fix: use the new module id of TEESimulator
 - fix: extract base kernel version by matching X.Y.Z pattern
