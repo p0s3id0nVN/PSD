@@ -96,17 +96,6 @@ if [[ "${config_spoof_system_properties}" == "1" ]]; then
 	spoof_android_system_properties
 fi
 
-# Fix /data/local/tmp Inconsistencies
-if [[ "${config_fix_data_local_tmp_inconsistencies}" == "1" ]]; then
-	target_folder="/data/local/tmp"
-
-	mkdir -p "${target_folder}"
-	chmod 0771 "${target_folder}"
-	chown shell:shell "${target_folder}"
-	chcon u:object_r:shell_data_file:s0 "${target_folder}"
-	${SUSFS_BIN} add_sus_kstat_statically "${target_folder}" '100' 'default' 'default' '4096' 'default' 'default' 'default' 'default' 'default' 'default' '8' '512'
-fi
-
 #### Hide some sus paths, effective only for processes that are marked umounted with uid >= 10000 ####
 ## First we need to wait until files are accessible in /sdcard ##
 until [[ -e "/sdcard/Android" ]]; do sleep 1; done
@@ -286,9 +275,9 @@ if [[ "${config_brene_logs}" == "1" ]]; then
 		echo "#############################"
 	} >> "${PERSISTENT_DIR}/logs.txt"
 fi
-# brene_sus_path "/sys/block/loop0"
-brene_sus_path "/vendor/bin/install-recovery.sh"
-brene_sus_path "/system/bin/install-recovery.sh"
+# brene_sus_path_loop "/sys/block/loop0"
+brene_sus_path_loop "/vendor/bin/install-recovery.sh"
+brene_sus_path_loop "/system/bin/install-recovery.sh"
 
 # Load custom_sus_map.txt
 if [[ -e "${PERSISTENT_DIR}/custom_sus_map.txt" ]]; then
@@ -387,9 +376,11 @@ fi
 # EOF
 
 #### Adding sus mounts to umount list via built-in KernelSU kernel umount (not via add_try_umount from old susfs) ####
-# Umount Suspicious Mounts
 
+# Umount Suspicious Mounts
 if [[ "${config_umount_suspicious_mounts}" == "1" ]]; then
+	${KSU_BIN} feature set kernel_umount 1
+
 	## Don't forget to notify KernelSU that all ksu modules all mounted and ready ##
 	${KSU_BIN} kernel notify-module-mounted
 
@@ -403,6 +394,38 @@ if [[ "${config_hide_framework_res_apk}" == "1" ]]; then
 	find /system -iname "*framework-res.apk" | while read -r path; do
 		brene_sus_map "${path}"
 	done
+fi
+
+# Spoof Android Verified Boot Hash
+if [[ "${config_spoof_verified_boot_hash}" != '' ]]; then
+	resetprop_n "ro.boot.vbmeta.digest" "${config_spoof_verified_boot_hash}"
+fi
+
+# Fix /data/local/tmp Inconsistencies
+if [[ "${config_fix_data_local_tmp_inconsistencies}" == "1" ]]; then
+	target_folder="/data/local/tmp"
+
+	mkdir -p "${target_folder}"
+	chmod 0771 "${target_folder}"
+	chown shell:shell "${target_folder}"
+	chcon u:object_r:shell_data_file:s0 "${target_folder}"
+	# add_sus_kstat_statically </path/of/file_or_directory> <ino> <dev> <nlink> <size> <atime> <atime_nsec> <mtime> <mtime_nsec> <ctime> <ctime_nsec> <blocks> <blksize>
+	# ino -> %i, dev -> %d, nlink -> %h, atime -> %X, mtime -> %Y, ctime -> %Z, size -> %s, blocks -> %b, blksize -> %B
+	# Example: stat -c %i <path>
+	${SUSFS_BIN} add_sus_kstat_statically "${target_folder}" '100' 'default' 'default' '4096' 'default' 'default' 'default' 'default' 'default' 'default' '8' '4096'
+fi
+
+# Fix /debug_ramdisk Inconsistencies
+if [[ "${config_fix_debug_ramdisk_inconsistencies}" == "1" ]]; then
+	target_folder="/debug_ramdisk"
+
+	chmod 0755 "${target_folder}"
+	chown root:root "${target_folder}"
+	chcon u:object_r:tmpfs:s0 "${target_folder}"
+	# add_sus_kstat_statically </path/of/file_or_directory> <ino> <dev> <nlink> <size> <atime> <atime_nsec> <mtime> <mtime_nsec> <ctime> <ctime_nsec> <blocks> <blksize>
+	# ino -> %i, dev -> %d, nlink -> %h, atime -> %X, mtime -> %Y, ctime -> %Z, size -> %s, blocks -> %b, blksize -> %B
+	# Example: stat -c %i <path>
+	${SUSFS_BIN} add_sus_kstat_statically "${target_folder}" '20' 'default' 'default' '4096' '1230811200' 'default' '1230811200' 'default' '1230811200' 'default' '8' '4096'
 fi
 
 resetprop -c --force

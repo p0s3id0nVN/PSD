@@ -27,7 +27,7 @@ true > "${PERSISTENT_DIR}/logs.txt"
 ##  - It is stronly suggested to use dynamically if the target path will be mounted
 # cat <<EOF >/dev/null
 # # First, clone the permission before adding to sus_kstat
-# susfs_clone_perm "$MODDIR/hosts" /system/etc/hosts
+# brene_clone_perm "$MODDIR/hosts" /system/etc/hosts
 
 # # Second, before bind mount your file/directory, use 'add_sus_kstat' to add the path #
 # ${SUSFS_BIN} add_sus_kstat '/system/etc/hosts'
@@ -58,7 +58,7 @@ true > "${PERSISTENT_DIR}/logs.txt"
 # 1. Both target_pathname and redirected_pathname must be existed before they can be added to kernel.
 # 2. Users have to take care of the selinux permission for both target_pathname and redirected_pathname by themselves first.
 ## Set the permission of the redirected path first ##
-# susfs_clone_perm '/data/local/tmp/my_hosts' '/system/etc/hosts'
+# brene_clone_perm '/data/local/tmp/my_hosts' '/system/etc/hosts'
 ## Now add the target path and redirected path with pre-defined uid scheme to kernel ##
 ## *Run 'ksu_susfs add_open_redirect' for more details of <uid_scheme> ##
 # ${SUSFS_BIN} add_open_redirect '/system/etc/hosts' '/data/local/tmp/my_hosts' '0'
@@ -74,7 +74,7 @@ if [[ "${config_spoof_libstagefright}" == "1" ]]; then
 		touch "${fake_file_path}"
 	}
 
-	susfs_clone_perm "${fake_file_path}" "${path}"
+	brene_clone_perm "${fake_file_path}" "${path}"
 	${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
 fi
 
@@ -126,8 +126,8 @@ fi
 # if [[ $config_hide_modules_img == 1 ]]; then
 ## Hide all sus ext4 loops and jbd2 journals if they are still mounted and with jdb2 journal enabled ##
 # 	for device in $(ls -Ld /proc/fs/jbd2/loop*8 | sed 's|/proc/fs/jbd2/||; s|-8||'); do
-# 		PSD_sus_path /proc/fs/jbd2/${device}-8
-# 		PSD_sus_path /proc/fs/ext4/${device}
+# 		brene_sus_path_loop /proc/fs/jbd2/${device}-8
+# 		brene_sus_path_loop /proc/fs/ext4/${device}
 # 	done
 ## Also we need to spoof the nlink of /proc/fs/jbd2 to 2 ##
 # ${SUSFS_BIN} add_sus_kstat_statically '/proc/fs/jbd2' 'default' 'default' '2' 'default' 'default' 'default' 'default' 'default' 'default' 'default' 'default' 'default'
@@ -198,7 +198,8 @@ fi
 
 # Hide /system/addon.d Path
 if [[ "${config_hide_addon_d}" == "1" ]]; then
-	brene_sus_path "/system/addon.d"
+	brene_sus_map "/system/addon.d"
+	brene_sus_path_loop "/system/addon.d"
 fi
 
 # Hide Custom ROM Paths
@@ -210,6 +211,17 @@ if [[ "${config_hide_custom_rom_paths}" == "1" ]]; then
 		done
 
 		find /data -maxdepth 1 -iname "*${i}*" | while read -r path; do
+			brene_sus_map "${path}"
+			brene_sus_path_loop "${path}"
+		done
+	done
+fi
+
+# Hide Custom ROM Paths (Extreme)
+if [[ "${config_hide_custom_rom_paths_2}" == "1" ]]; then
+	for i in ${CUSTOM_ROM_NAMES//|/ }; do
+		find /data/misc /data/dalvik-cache /data/resource-cache -iname "*${i}*" | while read -r path; do
+			brene_sus_map "${path}"
 			brene_sus_path_loop "${path}"
 		done
 	done
@@ -226,7 +238,7 @@ if [[ "${config_hide_lineage_strings}" == "1" ]]; then
 			touch "${fake_file_path}"
 		}
 
-		susfs_clone_perm "${fake_file_path}" "${path}"
+		brene_clone_perm "${fake_file_path}" "${path}"
 		${SUSFS_BIN} add_open_redirect "${path}" "${fake_file_path}" '3'
 	done
 fi
@@ -245,6 +257,11 @@ if [[ "${config_hide_suspicious_pty}" == "1" ]]; then
 	for i in $(seq 0 5); do
 		brene_sus_path_loop "/dev/pts/${i}"
 	done
+fi
+
+# Spoof Android System Properties
+if [[ "${config_spoof_system_properties}" == "1" ]]; then
+	spoof_android_system_properties
 fi
 
 if [[ "${config_brene_logs}" == "1" ]]; then

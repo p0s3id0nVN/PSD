@@ -8,19 +8,21 @@ SUSFS_BIN=/data/adb/ksu/bin/susfs
 PERSISTENT_DIR=/data/adb/brene
 DEST_BIN_DIR=/data/adb/ksu/bin
 
-## susfs_clone_perm <file/or/dir/perm/to/be/changed> <file/or/dir/to/clone/from>
-susfs_clone_perm() {
+## brene_clone_perm <file/or/dir/perm/to/be/changed> <file/or/dir/to/clone/from>
+brene_clone_perm() {
+	# Always use busybox to maintain consistency
 	TO=$1
 	FROM=$2
-	if [ -z "${TO}" -o -z "${FROM}" ]; then
+
+	if [[ -z "${TO}" ]] || [[ -z "${FROM}" ]]; then
 		return
 	fi
-	## stat https://github.com/backslashxx/bindhosts/commit/427f18fe0b212ef2754e79c8aaaa72cb59ad253d#diff-8cb0da3b1680ce3a9f3263622042aa6f0250431fa5069513664650a17c48fdabR15
-	CLONED_PERM_STRING=$(stat -c "%a %U %G" ${FROM})
-	set ${CLONED_PERM_STRING}
-	chmod $1 ${TO}
-	chown $2:$3 ${TO}
-	busybox chcon --reference=${FROM} ${TO}
+
+	read -r permission owner group < <(busybox stat -c "%a %U %G" "${FROM}")
+
+	busybox chmod "${permission}" "${TO}"
+	busybox chown "${owner}":"${group}" "${TO}"
+	busybox chcon --reference="${FROM}" "${TO}"
 }
 
 # susfs_list_full_file_access_for_third_party_apps() {
@@ -61,10 +63,7 @@ spoof_android_system_properties() {
 	resetprop_n "ro.crypto.state" "encrypted"
 	resetprop_n "ro.debuggable" "0"
 	resetprop_n "ro.force.debuggable" "0"
-	resetprop_n "ro.kernel.qemu" ""
 	resetprop_n "ro.secure" "1"
-	resetprop_n "ro.build.selinux" "1"
-	resetprop_n "ro.build.selinux.enforce" "1"
 	resetprop_n "ro.secureboot.lockstate" "locked"
 	resetprop_n "ro.is_ever_orange" "0"
 	resetprop_n "ro.bootmode" "normal"
@@ -109,6 +108,18 @@ spoof_android_system_properties() {
 	resetprop_n "ro.vendor.build.fingerprint" "${new_fingerprint_value}"
 	resetprop_n "ro.vendor_dlkm.build.fingerprint" "${new_fingerprint_value}"
 
+	new_date_value=$(resetprop ro.build.date)
+	resetprop_n "ro.bootimage.build.date" "${new_date_value}"
+	resetprop_n "ro.build.date" "${new_date_value}"
+	resetprop_n "ro.odm.build.date" "${new_date_value}"
+	resetprop_n "ro.odm_dlkm.build.date" "${new_date_value}"
+	resetprop_n "ro.product.build.date" "${new_date_value}"
+	resetprop_n "ro.system.build.date" "${new_date_value}"
+	resetprop_n "ro.system_dlkm.build.date" "${new_date_value}"
+	resetprop_n "ro.system_ext.build.date" "${new_date_value}"
+	resetprop_n "ro.vendor.build.date" "${new_date_value}"
+	resetprop_n "ro.vendor_dlkm.build.date" "${new_date_value}"
+
 	new_utc_value=$(resetprop ro.build.date.utc)
 	resetprop_n "ro.bootimage.build.date.utc" "${new_utc_value}"
 	resetprop_n "ro.build.date.utc" "${new_utc_value}"
@@ -120,6 +131,7 @@ spoof_android_system_properties() {
 	resetprop_n "ro.system_ext.build.date.utc" "${new_utc_value}"
 	resetprop_n "ro.vendor.build.date.utc" "${new_utc_value}"
 	resetprop_n "ro.vendor_dlkm.build.date.utc" "${new_utc_value}"
+	resetprop_n "persist.vendor.build.date.utc" "${new_utc_value}"
 
 	## Delete some prop names for newer pixel device ##
 	resetprop -d "ro.boot.verifiedbooterror"
@@ -129,6 +141,7 @@ spoof_android_system_properties() {
 	resetprop -d service.adb.root
 	resetprop -d service.adb.tcp.port
 
+	# https://android.googlesource.com/platform/frameworks/base/+/bab174bf0883cbc5039a2860a1af706a56fe6ca0%5E%21/
 	if [[ "$(resetprop ro.build.version.sdk)" -ge "36" ]]; then
 		resetprop -d sys.oem_unlock_allowed
 	else
@@ -159,6 +172,7 @@ brene_set_uname() {
 	fi
 }
 brene_sus_mount() {
+	${KSU_BIN} feature set kernel_umount 1
 	${KSU_BIN} kernel notify-module-mounted
 	${KSU_BIN} kernel umount add -f 2 "$1" 2> /dev/null
 }
