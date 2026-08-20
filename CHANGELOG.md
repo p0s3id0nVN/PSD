@@ -1,6 +1,6 @@
 # Changelog
 
-# BRENE v0.0.61 - Supports SuSFS 2.2.0+
+# PSD v0.0.61 - Supports SuSFS 2.2.0+
 
 - improve: avoids overheat in "Hide Custom ROM Paths" the paths are read-only, use sus path instead of sus path loop
 - add: re-implement "Spoof Android Verified Boot Hash"
