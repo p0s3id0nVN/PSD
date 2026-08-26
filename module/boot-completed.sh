@@ -17,7 +17,7 @@ CUSTOM_ROM_NAMES="lineage|infinity|evolution|crdroid|mistos|axion|pixelos|rising
 susfs_ver=$(${SUSFS_BIN} show version)
 description="A SuSFS/KernelSU module for SuSFS patched kernels"
 if [[ "${susfs_ver}" == "v2"* ]]; then
-	${KSU_BIN} module config set override.description "[SuSFS: ${susfs_ver} 💯] ${description}"
+	${KSU_BIN} module config set override.description "[SuSFS: ${susfs_ver} ✅] ${description}"
 else
 	${KSU_BIN} module config set override.description "[SuSFS: ❌] ${description}"
 fi
@@ -314,14 +314,14 @@ if [[ -e "${PERSISTENT_DIR}/custom_sus_path_loop.txt" ]]; then
 	done < "${PERSISTENT_DIR}/custom_sus_path_loop.txt"
 fi
 
-# Load custom_sus_mount.txt
-if [[ -e "${PERSISTENT_DIR}/custom_sus_mount.txt" ]]; then
+# Load custom_kernel_umount.txt
+if [[ -e "${PERSISTENT_DIR}/custom_kernel_umount.txt" ]]; then
 	while IFS= read -r i; do
 		# Skip empty lines or comments
 		[[ -z "${i// /}" || "${i// /}" == "#"* ]] && continue
 
-		brene_sus_mount "${i}"
-	done < "${PERSISTENT_DIR}/custom_sus_mount.txt"
+		brene_kernel_umount "${i}"
+	done < "${PERSISTENT_DIR}/custom_kernel_umount.txt"
 fi
 
 #### Hide the mmapped real file from various maps in /proc/self/, effective only for processes that are marked umounted with uid >= 10000 ####
@@ -418,19 +418,6 @@ if [[ "${config_fix_data_local_tmp_inconsistencies}" == "1" ]]; then
 	# ino -> %i, dev -> %d, nlink -> %h, atime -> %X, mtime -> %Y, ctime -> %Z, size -> %s, blocks -> %b, blksize -> %B
 	# Example: stat -c %i <path>
 	${SUSFS_BIN} add_sus_kstat_statically "${target_folder}" '100' 'default' 'default' '4096' 'default' 'default' 'default' 'default' 'default' 'default' '8' '4096'
-fi
-
-# Fix /debug_ramdisk Inconsistencies
-if [[ "${config_fix_debug_ramdisk_inconsistencies}" == "1" ]]; then
-	target_folder="/debug_ramdisk"
-
-	chmod 0755 "${target_folder}"
-	chown root:root "${target_folder}"
-	chcon u:object_r:tmpfs:s0 "${target_folder}"
-	# add_sus_kstat_statically </path/of/file_or_directory> <ino> <dev> <nlink> <size> <atime> <atime_nsec> <mtime> <mtime_nsec> <ctime> <ctime_nsec> <blocks> <blksize>
-	# ino -> %i, dev -> %d, nlink -> %h, atime -> %X, mtime -> %Y, ctime -> %Z, size -> %s, blocks -> %b, blksize -> %B
-	# Example: stat -c %i <path>
-	${SUSFS_BIN} add_sus_kstat_statically "${target_folder}" '20' 'default' 'default' '4096' '1230811200' 'default' '1230811200' 'default' '1230811200' 'default' '8' '4096'
 fi
 
 resetprop -c --force

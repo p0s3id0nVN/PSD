@@ -168,7 +168,8 @@ if [[ "${config_spoof_uname}" == "1" ]]; then
 
 	kernel_version=$(cat /proc/version | awk '{print $3}' | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
 	kmi=$(${KSU_BIN} boot-info current-kmi | cut -d'-' -f1)
-	uname_kernel_release="${kernel_version}-${kmi}"
+
+	uname_kernel_release="${kernel_version}-${kmi}-9-g$(shuf -i 10000000-99999999 -n 1)" # e.g., "6.1.145-android14-9-g00000000"
 	uname_kernel_version="#1 SMP PREEMPT $(resetprop ro.build.date | tr -s ' ')"
 
 	brene_set_uname "${uname_kernel_release}" "${uname_kernel_version}"
@@ -272,6 +273,16 @@ if [[ "${config_hide_suspicious_pty}" == "1" ]]; then
 	for i in $(seq 0 5); do
 		brene_sus_path_loop "/dev/pts/${i}"
 	done
+fi
+
+# Spoof /system/etc/hosts
+if [[ "${config_spoof_hosts}" == "1" ]]; then
+	path=/system/etc/hosts
+
+	# add_sus_kstat_statically </path/of/file_or_directory> <ino> <dev> <nlink> <size> <atime> <atime_nsec> <mtime> <mtime_nsec> <ctime> <ctime_nsec> <blocks> <blksize>
+	# ino -> %i, dev -> %d, nlink -> %h, atime -> %X, mtime -> %Y, ctime -> %Z, size -> %s, blocks -> %b, blksize -> %B
+	# Example: stat -c %i <path>
+	${SUSFS_BIN} add_sus_kstat_statically "${path}" '100' 'default' 'default' '64' 'default' 'default' 'default' 'default' 'default' 'default' '1' '4096'
 fi
 
 # Spoof Android System Properties
