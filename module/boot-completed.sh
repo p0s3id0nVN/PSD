@@ -154,6 +154,8 @@ if [[ "${config_hide_custom_recovery}" == "1" ]]; then
 	[[ -e "/storage/emulated/0/Fox" ]] && brene_sus_path "/storage/emulated/0/Fox"
 	[[ -e "/storage/emulated/0/TWRP" ]] && brene_sus_path "/storage/emulated/0/TWRP"
 	[[ -e "/data/recovery" ]] && brene_sus_path "/data/recovery"
+	[[ -e "/vendor/bin/install-recovery.sh" ]] && brene_sus_path "/vendor/bin/install-recovery.sh"
+	[[ -e "/system/bin/install-recovery.sh" ]] && brene_sus_path "/system/bin/install-recovery.sh"
 fi
 
 # Non-standard /storage/emulated/0
@@ -231,59 +233,6 @@ if [[ "${config_paths_hiding__data_local_tmp}" == "1" ]]; then
 	done
 fi
 
-# /storage/emulated/0/Android/[data | media | obb]
-if [[ "${config_paths_hiding__sdcard_android_data_media_obb}" == "1" ]]; then
-	if [[ "${config_brene_logs}" == "1" ]]; then
-		{
-			echo ""
-			echo "####################################"
-			echo "/storage/emulated/0/Android/[data | media | obb]"
-			echo "####################################"
-		} >> "${PERSISTENT_DIR}/logs.txt"
-	fi
-
-	packages="
-	io.github.muntashirakon.AppManager
-	com.github.capntrips.kernelflasher
-	com.machiav3lli.backup
-	"
-
-	for i in ${packages}; do
-		path1=/storage/emulated/0/Android
-		full_path1="${path1}/data/${i}"
-		full_path2="${path1}/media/${i}"
-		full_path3="${path1}/obb/${i}"
-		[[ -e "${full_path1}" ]] && brene_sus_path "${full_path1}"
-		[[ -e "${full_path2}" ]] && brene_sus_path "${full_path2}"
-		[[ -e "${full_path3}" ]] && brene_sus_path "${full_path3}"
-	done
-
-	# path1=/storage/emulated/0/Android/data
-	# path2=/storage/emulated/0/Android/media
-	# path3=/storage/emulated/0/Android/obb
-	# for i in $(pm list packages -3 | cut -d':' -f2); do
-	# 	full_path1="${path1}/${i}"
-	# 	full_path2="${path2}/${i}"
-	# 	full_path3="${path3}/${i}"
-	# 	[[ -e "${full_path1}" ]] && brene_sus_path "${full_path1}"
-	# 	[[ -e "${full_path2}" ]] && brene_sus_path "${full_path2}"
-	# 	[[ -e "${full_path3}" ]] && brene_sus_path "${full_path3}"
-	# done
-fi
-
-## For paths that are read-only all the time, add them via 'add_sus_path' ##
-if [[ "${config_brene_logs}" == "1" ]]; then
-	{
-		echo ""
-		echo "#############################"
-		echo "Other Suspicious Paths Hiding"
-		echo "#############################"
-	} >> "${PERSISTENT_DIR}/logs.txt"
-fi
-# brene_sus_path "/sys/block/loop0"
-brene_sus_path "/vendor/bin/install-recovery.sh"
-brene_sus_path "/system/bin/install-recovery.sh"
-
 # Load custom_sus_map.txt
 if [[ -e "${PERSISTENT_DIR}/custom_sus_map.txt" ]]; then
 	while IFS= read -r i; do
@@ -345,30 +294,6 @@ fi
 ## Hide some zygisk modules ##
 # brene_sus_map /data/adb/modules/my_module/zygisk/arm64-v8a.so
 
-# Injections Hiding
-if [[ "${config_hide_injections}" == "1" ]]; then
-	if [[ "${config_brene_logs}" == "1" ]]; then
-		{
-			echo ""
-			echo "#################"
-			echo "Injections Hiding"
-			echo "#################"
-		} >> "${PERSISTENT_DIR}/logs.txt"
-	fi
-
-	for i in /data/adb/modules/*; do
-		if [[ -e "${i}/system" ]]; then
-			for x in $(find "${i}/system" -type f); do
-				brene_sus_map "${x}"
-			done
-		fi
-	done
-
-	for i in $(find /data/adb/modules -name "*.so"); do
-		brene_sus_map "${i}"
-	done
-fi
-
 #### Adding sus mounts to umount list via built-in KernelSU kernel umount (not via add_try_umount from old susfs) ####
 # cat <<EOF >/dev/null
 # ## Don't forget to notify KernelSU that all ksu modules all mounted and ready ##
@@ -401,7 +326,7 @@ if [[ "${config_hide_framework_res_apk}" == "1" ]]; then
 	done
 fi
 
-# Spoof Android Verified Boot Hash
+# Spoof Android Verified Boot Hash Property
 if [[ "${config_spoof_verified_boot_hash}" != '' ]]; then
 	resetprop_n "ro.boot.vbmeta.digest" "${config_spoof_verified_boot_hash}"
 fi
