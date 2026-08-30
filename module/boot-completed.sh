@@ -14,12 +14,16 @@ CUSTOM_ROM_NAMES="lineage|infinity|evolution|crdroid|mistos|axion|pixelos|rising
 [[ -e "${PERSISTENT_DIR}/config.sh" ]] && source "${PERSISTENT_DIR}/config.sh"
 
 # Update Description
-susfs_ver=$(${SUSFS_BIN} show version)
+susfs_version=$(${SUSFS_BIN} show version)
+susfs_variant=$(${SUSFS_BIN} show variant)
+susfs_features_number=$(${SUSFS_BIN} show enabled_features | wc -l)
 description="A SuSFS/KernelSU module for SuSFS patched kernels"
-if [[ "${susfs_ver}" == "v2"* ]]; then
-	${KSU_BIN} module config set override.description "[SuSFS: ${susfs_ver} ✅] ${description}"
+if [[ "${susfs_version}" == "v2"* ]]; then
+	status="Active ✅"
+	${KSU_BIN} module config set override.description "[Status: ${status} | SuSFS: ${susfs_version} (${susfs_variant}) | SuSFS Features: ${susfs_features_number} enabled] ${description}"
 else
-	${KSU_BIN} module config set override.description "[SuSFS: ❌] ${description}"
+	status="Not Working ❌"
+	${KSU_BIN} module config set override.description "[Status: ${status} | SuSFS: ${susfs_version} (${susfs_variant}) | SuSFS Features: ${susfs_features_number} enabled] ${description}"
 fi
 
 # SU Compat
@@ -151,11 +155,11 @@ if [[ "${config_hide_custom_recovery}" == "1" ]]; then
 		} >> "${PERSISTENT_DIR}/logs.txt"
 	fi
 
-	[[ -e "/storage/emulated/0/Fox" ]] && brene_sus_path "/storage/emulated/0/Fox"
-	[[ -e "/storage/emulated/0/TWRP" ]] && brene_sus_path "/storage/emulated/0/TWRP"
-	[[ -e "/data/recovery" ]] && brene_sus_path "/data/recovery"
-	[[ -e "/vendor/bin/install-recovery.sh" ]] && brene_sus_path "/vendor/bin/install-recovery.sh"
-	[[ -e "/system/bin/install-recovery.sh" ]] && brene_sus_path "/system/bin/install-recovery.sh"
+	[[ -e "/storage/emulated/0/Fox" ]] && brene_sus_path_loop "/storage/emulated/0/Fox"
+	[[ -e "/storage/emulated/0/TWRP" ]] && brene_sus_path_loop "/storage/emulated/0/TWRP"
+	[[ -e "/data/recovery" ]] && brene_sus_path_loop "/data/recovery"
+	[[ -e "/vendor/bin/install-recovery.sh" ]] && brene_sus_path_loop "/vendor/bin/install-recovery.sh"
+	[[ -e "/system/bin/install-recovery.sh" ]] && brene_sus_path_loop "/system/bin/install-recovery.sh"
 fi
 
 # Non-standard /storage/emulated/0
@@ -186,7 +190,7 @@ if [[ "${config_paths_hiding__non_standard_sdcard}" == "1" ]]; then
 
 		[[ "${pass}" == "1" ]] && continue
 
-		brene_sus_path "${i}"
+		brene_sus_path_loop "${i}"
 	done
 fi
 
@@ -213,7 +217,7 @@ if [[ "${config_paths_hiding__non_standard_sdcard_android}" == "1" ]]; then
 
 		[[ "${pass}" == "1" ]] && continue
 
-		brene_sus_path "${i}"
+		brene_sus_path_loop "${i}"
 	done
 fi
 
@@ -229,7 +233,7 @@ if [[ "${config_paths_hiding__data_local_tmp}" == "1" ]]; then
 	fi
 
 	for i in /data/local/tmp/*; do
-		brene_sus_path "${i}"
+		brene_sus_path_loop "${i}"
 	done
 fi
 
