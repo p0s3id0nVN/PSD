@@ -23,7 +23,7 @@ echo ""
 
 echo "Soon"
 
-# echo "- BRENE Version: $(grep "^version=" "${MODDIR}/module.prop" | cut -d'=' -f2)"
+# echo "- PSD Version: $(grep "^version=" "${MODDIR}/module.prop" | cut -d'=' -f2)"
 # echo "- SuSFS Version: $(${SUSFS_BIN} show version)"
 # echo "- Device Model: $(resetprop ro.product.manufacturer) $(resetprop ro.product.model) $(resetprop ro.product.device)"
 # echo "- Android Version: $(resetprop ro.build.version.release) (API $(resetprop ro.build.version.sdk)) | SDK $(resetprop ro.build.version.sdk)"
