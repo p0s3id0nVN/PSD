@@ -7,6 +7,7 @@ SUSFS_BIN=/data/adb/ksu/bin/susfs
 PERSISTENT_DIR=/data/adb/brene
 DEST_BIN_DIR=/data/adb/ksu/bin
 CUSTOM_ROM_NAMES="lineage|infinity|evolution|crdroid|mistos|axion|pixelos|rising|lunaris|halcyon|havoc|alphadroid|bliss|calyx|derpfest|graphene|lmodroid|lumine|matrixx|clover|yaap|aospa"
+SUSFS_VARIANT=$(${SUSFS_BIN} show variant)
 
 # Load utils
 [[ -e "${MODDIR}/utils.sh" ]] && source "${MODDIR}/utils.sh"
@@ -103,9 +104,7 @@ fi
 
 # Spoof /proc/cmdline or /proc/bootconfig
 if [[ "${config_spoof_cmdline_or_bootconfig}" == "1" ]]; then
-	susfs_variant=$(${SUSFS_BIN} show variant)
-
-	if [[ "${susfs_variant}" == "GKI" ]]; then
+	if [[ "${SUSFS_VARIANT}" == "GKI" ]]; then
 		FAKE_BOOTCONFIG="${PERSISTENT_DIR}/fake_bootconfig"
 
 		cat /proc/bootconfig > "${FAKE_BOOTCONFIG}"
@@ -138,8 +137,6 @@ fi
 #ksu_susfs enable_avc_log_spoofing 0
 if [[ "${config_enable_avc_log_spoofing}" == "1" ]]; then
 	${SUSFS_BIN} enable_avc_log_spoofing 1
-elif [[ "${config_enable_avc_log_spoofing}" == "0" ]]; then
-	${SUSFS_BIN} enable_avc_log_spoofing 0
 fi
 
 #### Hide all sus mounts for NON-SU processes in this stage just to prevent zygote from caching them in memory ####
@@ -147,8 +144,6 @@ fi
 ## Or it is up to you to keep it enabled since su process can still see the mounts ##
 if [[ "${config_hide_sus_mnts_for_non_su_procs}" == "1" ]]; then
 	${SUSFS_BIN} hide_sus_mnts_for_non_su_procs 1
-elif [[ "${config_hide_sus_mnts_for_non_su_procs}" == "0" ]]; then
-	${SUSFS_BIN} hide_sus_mnts_for_non_su_procs 0
 fi
 
 # Spoof Uname
@@ -167,12 +162,18 @@ if [[ "${config_spoof_uname}" == "1" ]]; then
 	fi
 
 	kernel_version=$(cat /proc/version | awk '{print $3}' | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
-	kmi=$(${KSU_BIN} boot-info current-kmi | cut -d'-' -f1)
-
-	uname_kernel_release="${kernel_version}-${kmi}-9-g$(shuf -i 10000000-99999999 -n 1)" # e.g., "6.1.145-android14-9-g00000000"
 	uname_kernel_version="#1 SMP PREEMPT $(resetprop ro.build.date | tr -s ' ')"
 
-	brene_set_uname "${uname_kernel_release}" "${uname_kernel_version}"
+	if [[ "${SUSFS_VARIANT}" == "GKI" ]]; then
+		kmi=$(${KSU_BIN} boot-info current-kmi | cut -d'-' -f1)
+		uname_kernel_release="${kernel_version}-${kmi}-9-g$(shuf -i 10000000-99999999 -n 1)" # e.g., "6.1.145-android14-9-g00000000"
+
+		brene_set_uname "${uname_kernel_release}" "${uname_kernel_version}"
+	else
+		uname_kernel_release="${kernel_version}-g$(shuf -i 10000000-99999999 -n 1)" # e.g., "4.9.145-g00000000"
+
+		brene_set_uname "${uname_kernel_release}" "${uname_kernel_version}"
+	fi
 fi
 
 # Custom Spoof Uname
