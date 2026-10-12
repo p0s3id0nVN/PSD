@@ -75,7 +75,7 @@ fi
 
 # Disable Child Process Restrictions
 if [[ "${config_disable_child_process_restrictions}" == "1" ]]; then
-	resetprop_n persist.sys.fflag.override.settings_enable_monitor_phantom_procs false
+	resetprop -n -p persist.sys.fflag.override.settings_enable_monitor_phantom_procs false
 fi
 
 # Max Saturation
@@ -86,6 +86,12 @@ fi
 # Show Refresh Rate
 if [[ "${config_show_refresh_rate}" == "1" ]]; then
 	service call SurfaceFlinger 1034 i32 1
+fi
+
+# Set logcat and logd buffer to 64K
+if [[ "${config_shrink_buffer_size}" == "1" ]]; then
+	logcat -G 64K
+	resetprop -n -p persist.logd.size 65536
 fi
 
 # SELinux Enforcing
@@ -115,7 +121,6 @@ if [[ "${config_spoof_libstagefright}" == "1" ]]; then
 	file_name=$(basename "${path}")
 	fake_file_path="${PERSISTENT_DIR}/fake_files/${file_name}"
 
-	[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
 	[[ ! -f "${fake_file_path}" ]] && {
 		touch "${fake_file_path}"
 	}
@@ -129,7 +134,6 @@ if [[ "${config_hide_lineage_strings}" == "1" ]]; then
 		file_name=$(basename "${path}")
 		fake_file_path="${PERSISTENT_DIR}/fake_files/${file_name}"
 
-		[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
 		[[ ! -f "${fake_file_path}" ]] && {
 			touch "${fake_file_path}"
 		}
@@ -142,7 +146,6 @@ if [[ "${config_hide_lineage_strings}" == "1" ]]; then
 			file_name=$(basename "${path}")
 			fake_file_path="${PERSISTENT_DIR}/fake_files/${file_name}"
 
-			[[ ! -d "${PERSISTENT_DIR}/fake_files" ]] && mkdir -p "${PERSISTENT_DIR}/fake_files"
 			[[ ! -f "${fake_file_path}" ]] && {
 				touch "${fake_file_path}"
 			}
@@ -166,6 +169,9 @@ until [[ -e "/storage/emulated/0/Android" ]]; do sleep 1; done
 # Spoof System Properties
 if [[ "${config_spoof_system_properties}" == "1" ]]; then
 	spoof_system_properties
+
+	# set after vold settles so the encrypted transition still reaches vendor init triggers
+	if_prop_exits_resetprop_n "ro.crypto.state" "encrypted"
 fi
 # Spoof Fingerprint Properties
 if [[ "${config_spoof_fingerprint_properties}" == "1" ]]; then
