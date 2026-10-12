@@ -6,7 +6,7 @@
 - improve: simplify "Reset fake_files folder" code
 - fix: set ro.crypto.state after boot completed to preserve vendor crypto transition triggers (#61)
 - add: webui: UID Filter module
-- Merge branch 'main' of https://github.com/rrr333nnn333/BRENE
+- Merge branch 'main' of https://github.com/rrr333nnn333/PSD
 - improve: webui: add some useful links to Recommended Modules
 - change: webui: move "Spoof /system/etc/hosts" to Custom ROM section
 - change: disable some options by default
