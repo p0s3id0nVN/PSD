@@ -1,4 +1,4 @@
-# BRENE - KernelSU module with SuSFS support and more
+# PSD - KernelSU module with SuSFS support and more
 
 This module is used for installing a userspace helper tool called ksu_susfs and susfs (They are the same binary) into /data/adb/ksu/bin/ to communicate with SUSFS kernel.
 
