@@ -3,5 +3,5 @@ name=.PSD - SuSFS
 version=v0.0.71
 versionCode=71
 author=rrr333nnn333, simonpunk, KOWX712
-description=A SuSFS/KernelSU module for SuSFS patched kernels
-updateJson=https://raw.githubusercontent.com/rrr333nnn333/PSD/refs/heads/main/update.json
+description=KernelSU module with SuSFS support and more
+updateJson=https://raw.githubusercontent.com/rrr333nnn333/BRENE/refs/heads/main/update.json

@@ -54,7 +54,7 @@ fi
 susfs_total_features=9
 susfs_features_number=$(${SUSFS_BIN} show enabled_features | wc -l)
 kernel_version=$(cat /proc/version | awk '{print $3}' | grep -oE '^[0-9]+\.[0-9]+\.[0-9]+')
-description="A SuSFS/KernelSU module for SuSFS patched kernels"
+description="KernelSU module with SuSFS support and more"
 status="Waiting for reboot ⏱️"
 ${KSU_BIN} module config set override.description "[Status: ${status} | Kernel Version: ${kernel_version} | SuSFS: ${susfs_version} | SuSFS Kernel Features: ${susfs_features_number}/${susfs_total_features} enabled] ${description}"
 
