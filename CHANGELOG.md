@@ -3,7 +3,7 @@
 # Supports SuSFS 2.2.0 and 2.3.0+
 
 - improve: descriptions, text format and code logic in android options.
-- module: new description for BRENE.
+- module: new description for PSD.
 - improve: webui: replace "Play Integrity Fix" with "Play Integrity Fork" module.
 - improve: webui: add more useful links for recommended modules (telegram, nightly.link).
 - add: webui: Strong Keyboxes link.
