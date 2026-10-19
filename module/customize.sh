@@ -69,6 +69,9 @@ ${KSU_BIN} module config set override.description "[Status: ${status} | Kernel V
 echo "[✅] Preparing brene persistent directory (${PERSISTENT_DIR})"
 mkdir -p "${PERSISTENT_DIR}"
 
+# Backup SuSFS binary
+cp -pf "${DEST_BIN_DIR}/susfs" "${PERSISTENT_DIR}"
+
 files="
 custom_sus_map.txt
 custom_kernel_umount.txt
@@ -106,17 +109,7 @@ update_config_date
 [[ -d "${PERSISTENT_DIR}/fake_files" ]] && rm -rf "${PERSISTENT_DIR}/fake_files"
 mkdir -p "${PERSISTENT_DIR}/fake_files"
 
-# Enable WebUI without reboot
-MODDIR="/data/adb/modules/brene"
-MODULES_PATH="/data/adb/modules"
-
-rm -rf "${MODDIR}"
-cp -rp "${MODPATH}" "${MODULES_PATH}"
-
-(
-	sleep 1
-	rm -rf "${MODPATH}"
-	rm "${MODDIR}/update"
-) & # fork in background
-
-echo '[✅] WebUI is ready!'
+# Hot install support
+if [[ "${KSU_HAS_HOT_INSTALL}" == true ]]; then
+	export MODULE_HOT_INSTALL_REQUEST=true
+fi

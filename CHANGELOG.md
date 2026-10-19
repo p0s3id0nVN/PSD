@@ -2,14 +2,13 @@
 
 # Supports SuSFS 2.2.0 and 2.3.0+
 
-- improve: Spoof /system/etc/hosts: use open_redirect to spoof it as a stock hosts file
-- improve: simplify "Reset fake_files folder" code
-- fix: set ro.crypto.state after boot completed to preserve vendor crypto transition triggers (#61)
-- add: webui: UID Filter module
-- Merge branch 'main' of https://github.com/rrr333nnn333/PSD
-- improve: webui: add some useful links to Recommended Modules
-- change: webui: move "Spoof /system/etc/hosts" to Custom ROM section
-- change: disable some options by default
-- change: webui: move "Custom Spoof Uname" to SuSFS section
-- improve: webui: add example for OPEN_REDIRECT and replace "/storage/emulated/0" with "/sdcard"
-- add: "Set logcat and logd buffer to 64K" toggle
+- improve: descriptions, text format and code logic in android options.
+- module: new description for BRENE.
+- improve: webui: replace "Play Integrity Fix" with "Play Integrity Fork" module.
+- improve: webui: add more useful links for recommended modules (telegram, nightly.link).
+- add: webui: Strong Keyboxes link.
+- improve: try to fix some issues on some devices by removing -p (--persistent) flag in resetprop.
+- drop: Spoof System Properties Every Minute if.
+- improve: backup/restore SuSFS binary if another module removes it.
+- improve: minimal WebUI changes.
+- add: support for KSU's Hot install; drop: own hot install implementation.
