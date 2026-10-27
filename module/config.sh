@@ -4,13 +4,14 @@ config_paths_hiding__data_local_tmp=1
 config_paths_hiding__non_standard_sdcard=0
 config_paths_hiding__non_standard_sdcard_android=1
 
-config_selinux=1
 config_su_compat=1
 config_spoof_uname=1
 config_selinux_hide=1
 config_kernel_umount=1
 config_shrink_buffer_size=1
 config_hide_custom_recovery=1
+config_hide_ksu_directories=1
+config_hide_third_party_apps=1
 config_enable_avc_log_spoofing=1
 config_hide_sus_mnts_for_non_su_procs=1
 config_fix_data_local_tmp_inconsistencies=1

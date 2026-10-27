@@ -94,11 +94,6 @@ if [[ "${config_shrink_buffer_size}" == "1" ]]; then
 	resetprop -n persist.logd.size 65536
 fi
 
-# SELinux Enforcing
-if [[ "${config_selinux}" == "1" ]]; then
-	[[ "$(getenforce)" != "Enforcing" ]] && setenforce 1
-fi
-
 # Remove Custom ROM Properties
 if [[ "${config_rom_props}" == "1" ]]; then
 	resetprop | grep -iE "${CUSTOM_ROM_NAMES}" | awk -F'[][]' '{print $2}' | while read -r prop; do
@@ -210,6 +205,14 @@ TARGET3="/storage/emulated/0/Android/media/${TARGET}"
 TARGET4="/storage/emulated/0/Android/obb/${TARGET}"
 rm -rf "${TARGET1}" "${TARGET2}" "${TARGET3}" "${TARGET4}"
 inotifyd "${MODDIR}/inotify.sh" /storage/emulated/0:n &
+
+# Hide KernelSU directories
+if [[ "${config_hide_ksu_directories}" == "1" ]]; then
+	sh "${MODDIR}/remove_ksu_directory.sh"
+	inotifyd "${MODDIR}/remove_ksu_directory.sh" /storage/emulated/0/Android/data:n &
+	inotifyd "${MODDIR}/remove_ksu_directory.sh" /storage/emulated/0/Android/media:n &
+	inotifyd "${MODDIR}/remove_ksu_directory.sh" /storage/emulated/0/Android/obb:n &
+fi
 
 ## For paths that are frequently modified, we can add them via 'add_sus_path_loop' ##
 ## Be reminded that without HMA's vold app data enabled, added sus_paths are still vulnerable to zwc exploit, so in this case users also have to add its underlying path as well ##
@@ -415,6 +418,12 @@ if [[ "${config_fix_data_local_tmp_inconsistencies}" == "1" ]]; then
 	# ino -> %i, dev -> %d, nlink -> %h, atime -> %X, mtime -> %Y, ctime -> %Z, size -> %s, blocks -> %b, blksize -> %B
 	# Example: stat -c %i <path>
 	${SUSFS_BIN} add_sus_kstat_statically "${target_folder}" '100' 'default' 'default' '4096' 'default' 'default' 'default' 'default' 'default' 'default' '8' '4096'
+fi
+
+# Hide third party apps
+if [[ "${config_hide_third_party_apps}" == "1" ]]; then
+	packages=$(pm list packages -3 | awk -F: '{out = out (out ? "," : "") $2} END {print out}')
+	${SUSFS_BIN} set_priority_uid_filter "${packages}"
 fi
 
 resetprop -c --force
