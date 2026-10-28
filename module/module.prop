@@ -1,7 +1,7 @@
 id=brene
-name=.PSD - SuSFS
-version=v0.0.72
-versionCode=72
+name=.BRENE - SuSFS
+version=v0.0.73
+versionCode=73
 author=rrr333nnn333, simonpunk, KOWX712
 description=KernelSU module with SuSFS support and more
 updateJson=https://raw.githubusercontent.com/rrr333nnn333/PSD/refs/heads/main/update.json
