@@ -1,5 +1,7 @@
 # shellcheck disable=SC2154
 # shellcheck disable=SC2148
+sleep 1
+
 remove_directory() {
 	if [[ -z "$1" ]]; then
 		return 1
@@ -13,3 +15,4 @@ remove_directory() {
 
 remove_directory "me.weishu.kernelsu"
 remove_directory "com.rifsxd.ksunext"
+remove_directory "org.frknkrc44.hma_oss"
