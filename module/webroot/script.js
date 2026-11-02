@@ -70,9 +70,6 @@ const configs = [
 	{ id: 'spoof_cmdline_or_bootconfig' },
 	{ id: 'fix_data_local_tmp_inconsistencies' },
 	{ id: 'spoof_system_properties' },
-	{ id: 'spoof_fingerprint_properties' },
-	{ id: 'spoof_utc_properties' },
-	{ id: 'spoof_date_properties' },
 	{ id: 'spoof_os_security_patch_level_property' },
 	{ id: 'spoof_vendor_security_patch_level_property' },
 
@@ -85,7 +82,7 @@ const configs = [
 document.querySelectorAll('a[href]').forEach((element) => {
 	element.addEventListener('click', (event) => {
 		event.preventDefault()
-		exec(`am start -a android.intent.action.VIEW -d ${element.href}`)
+		exec(`cmd activity start -a android.intent.action.VIEW -d ${element.href}`)
 	})
 })
 
@@ -369,12 +366,13 @@ exec(`cat ${PERSISTENT_DIR}/config.sh`).then((result) => {
 			const APP_URL = `https://play.google.com/store/apps/details?id=${PKG}`
 			if (result.stdout.includes('package:')) {
 				exec(`
-					am start ${PKG}/.MainActivity
+					cmd activity force-stop ${PKG}
+					cmd activity start ${PKG}/.MainActivity
 					input keyevent KEYCODE_TAB
 					input keyevent KEYCODE_ENTER
 				`)
 			} else {
-				exec(`am start -a android.intent.action.VIEW -d ${APP_URL}`)
+				exec(`cmd activity start -a android.intent.action.VIEW -d ${APP_URL}`)
 			}
 		})
 	})
